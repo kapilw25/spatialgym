@@ -33,3 +33,14 @@ activate(location.hash.startsWith('#tab-')?location.hash.slice(5):leaves[0],fals
   document.addEventListener('click',()=>toggle(false));
   document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false);});
 })();
+
+// ---- theme switch: dark by default, light if the OS asks or the viewer chose it; the choice stays in this browser
+(function(){
+  const btn=document.getElementById('theme'); if(!btn) return;
+  const root=document.documentElement;
+  const paint=()=>{btn.textContent=root.getAttribute('data-theme')==='light'?'☀️':'🌙';};
+  btn.addEventListener('click',e=>{e.stopPropagation();const light=root.getAttribute('data-theme')!=='light';
+    if(light)root.setAttribute('data-theme','light');else root.removeAttribute('data-theme');
+    try{localStorage.setItem('planpage:theme',light?'light':'dark')}catch(err){} paint();});
+  paint();
+})();

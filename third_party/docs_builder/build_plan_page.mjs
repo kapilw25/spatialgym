@@ -150,9 +150,9 @@ const css = fs.readFileSync(path.join(here, "page.css"), "utf8");
 const js = fs.readFileSync(path.join(here, "page.js"), "utf8");
 const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}</title><style>${css}</style></head>
+<title>${esc(title)}</title><script>(function(){var t=null;try{t=localStorage.getItem('planpage:theme')}catch(e){}if(!t&&window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)t='light';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script><style>${css}</style></head>
 <body><div class="wrap">
-<header>${LOG.length ? `<button class="bell" id="bell" aria-label="decisions log" aria-expanded="false">🔔<span class="badge" id="badge" hidden></span></button>
+<header><div class="tools"><button class="theme" id="theme" aria-label="switch between dark and light" title="dark or light">🌙</button>${LOG.length ? `<button class="bell" id="bell" aria-label="decisions log" aria-expanded="false">🔔<span class="badge" id="badge" hidden></span></button>` : ""}</div>${LOG.length ? `
 <div class="drawer" id="drawer" hidden><div class="dhead"><b>🔔 Decisions log</b><span class="muted" id="dcount"></span></div>
 <ol class="dlist">${LOG.filter(e => e.open).concat(LOG.filter(e => !e.open)).map(e => `<li data-date="${esc(e.date)}"><span class="when">${e.open ? "open" : esc(e.date)}</span><div>${e.html}</div></li>`).join("")}</ol></div>` : ""}
 <h1>${esc(mdTitle)}</h1><div class="pre">${preHtml}</div></header>

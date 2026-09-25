@@ -1,6 +1,6 @@
 # Release
 
-Exported from the lab repo at commit `69a3636`; shared tooling vendored under [third_party/paperkit](third_party/paperkit) and [third_party/docs_builder](third_party/docs_builder) at the same commit. Rebuild the docs page with:
+Exported from the lab repo at commit `aa92b87`; shared tooling vendored under [third_party/paperkit](third_party/paperkit) and [third_party/docs_builder](third_party/docs_builder) at the same commit. Rebuild the docs page with:
 
 ```
 node third_party/docs_builder/build_plan_page.mjs docs/page_config.json
@@ -19,4 +19,4 @@ node third_party/docs_builder/build_plan_page.mjs docs/page_config.json
   - osd87m/fig_2.png (source: https://arxiv.org/html/2406.01584v3/dataset_samples.png)
   - vsi590k/fig_2.png (source: https://arxiv.org/html/2511.04670v1/annotated_real_video_1.png)
   - vsi590k/fig_3.png (source: https://arxiv.org/html/2511.04670v1/procthor.png)
-- Docs page: wrote docs/plan_area_a.html: 13 sections, nested nav, 108 KB
+- Docs page: wrote docs/plan_area_a.html: 13 sections, nested nav, 110 KB
