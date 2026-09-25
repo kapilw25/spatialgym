@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpatialGym-100K on SpatialGym-Bench (Plan A)</title><style>:root{--bg:#0b1220;--panel:#111a2e;--line:#26324d;--text:#e6edf7;--muted:#9fb0c8;--acc:#38bdf8;--plan:#f59e0b;--ok:#34d399}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+a{color:#93c5fd;text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1500px;margin:0 auto;padding:1rem 1.2rem 3rem}
+header{position:relative;padding-right:3.2rem}
+header h1{font-size:1.25rem;margin:.2rem 0 .4rem}
+header .pre ul{margin:.3rem 0 .2rem;padding-left:1.15rem}header .pre li{margin:.2rem 0;color:var(--text)}
+.bell{position:absolute;right:0;top:.1rem;font:inherit;font-size:1.25rem;line-height:1;background:var(--panel);border:1px solid var(--line);border-radius:.6rem;padding:.4rem .55rem;cursor:pointer;color:var(--text)}
+.bell:hover{border-color:#64748b}.bell[aria-expanded=true]{background:var(--acc);border-color:var(--acc)}
+.badge{position:absolute;top:-.4rem;right:-.4rem;min-width:1.15rem;height:1.15rem;padding:0 .3rem;border-radius:.6rem;background:#ef4444;color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.badge[hidden]{display:none}
+.drawer{position:absolute;right:0;top:2.6rem;z-index:20;width:min(30rem,92vw);max-height:70vh;overflow:auto;background:#0f172a;border:1px solid var(--line);border-radius:.7rem;box-shadow:0 14px 40px rgba(0,0,0,.6);font-size:.86rem}
+.drawer[hidden]{display:none}
+.dhead{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;border-bottom:1px solid var(--line);position:sticky;top:0;background:#0f172a}
+.dhead .muted{color:var(--muted);font-size:.78rem;flex:1}
+.mark{font:inherit;font-size:.74rem;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:.4rem;padding:.15rem .5rem;cursor:pointer}.mark:hover{color:var(--text)}
+.dlist{list-style:none;margin:0;padding:.2rem 0}
+.dlist li{display:grid;grid-template-columns:5.6rem 1fr;gap:.5rem;padding:.55rem .8rem;border-bottom:1px solid rgba(38,50,77,.6);align-items:start}
+.dlist li .dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--acc);margin-top:.4rem;visibility:hidden}
+.dlist li.unread .dot{visibility:visible}.dlist li.unread{background:rgba(56,189,248,.06)}
+.dlist li .when{color:var(--muted);font-size:.74rem;font-variant-numeric:tabular-nums;margin-top:.1rem}
+.dlist li[data-date=open] .when{color:var(--plan);font-weight:700}
+header .pre{color:var(--muted);font-size:.9rem}header .pre p{margin:.3rem 0}
+header .pre blockquote{margin:.5rem 0;padding:.5rem .8rem;border-left:3px solid var(--ok);background:var(--panel);color:var(--text);border-radius:.4rem}
+.navs{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-bottom:.3rem}
+nav.tabs{display:flex;flex-wrap:wrap;gap:.35rem;padding:.5rem 0 .2rem}
+nav.tabs.lvl1 button{font-size:.95rem;padding:.45rem .9rem;font-weight:600}
+nav.tabs.lvl2{padding-left:.6rem;border-left:2px solid var(--line);margin-left:.2rem}
+nav.tabs.lvl3{padding-left:1.4rem;border-left:2px dashed var(--line);margin-left:.2rem}
+nav.tabs.lvl3 button{font-size:.8rem;padding:.25rem .55rem}
+nav.tabs[data-parent]{display:none}nav.tabs[data-parent].active{display:flex}
+nav.tabs button{font:inherit;font-size:.86rem;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:.5rem;padding:.35rem .7rem;cursor:pointer}
+nav.tabs button:hover{color:var(--text)}nav.tabs button[aria-selected=true]{color:#0b1220;background:var(--acc);border-color:var(--acc);font-weight:600}
+.panel{display:none;padding-top:1rem}.panel.active{display:block}
+.panel h2{font-size:1.15rem;margin:.2rem 0 .8rem}.panel h3{font-size:1.02rem;margin:1.2rem 0 .5rem}
+pre{background:#0f172a;border:1px solid var(--line);border-radius:.6rem;padding:.8rem 1rem;overflow:auto;font:12.5px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:#dbe4f3}
+code{font:.92em ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;padding:.05rem .3rem;border-radius:.3rem}
+.tablewrap{overflow:auto;margin:.6rem 0}
+table{border-collapse:collapse;font-size:.88rem;min-width:100%}
+th,td{border:1px solid var(--line);padding:.4rem .55rem;vertical-align:top;text-align:left}
+th{background:var(--panel);position:sticky;top:0}
+tbody tr:nth-child(even){background:rgba(255,255,255,.02)}
+blockquote{margin:.6rem 0;padding:.5rem .8rem;border-left:3px solid var(--ok);background:var(--panel);border-radius:.4rem}
+.lede,.note{color:var(--muted);font-size:.9rem}
+.rival{margin:1.2rem 0 1.6rem}.rival h3 small{display:block;color:var(--muted);font-weight:400;font-size:.82rem;margin-top:.15rem}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.7rem}
+figure.q{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:.6rem;overflow:hidden;display:flex;flex-direction:column}
+figure.q img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#000}
+figure.q.figure img{object-fit:contain;background:#0f172a}
+figure.q figcaption{padding:.45rem .55rem;font-size:.78rem;line-height:1.35}
+figure.q .prov{color:var(--muted);font-size:.72rem;margin-top:.3rem}
+figure.q .tag{display:inline-block;font-size:.68rem;padding:0 .35rem;border-radius:.3rem;background:#1e293b;color:var(--muted)}
+figure.q > div{position:relative}
+figure.q .pair{display:grid;grid-template-columns:1fr 1fr}figure.q .pair img{aspect-ratio:1/1}
+figure.q .dtag{position:absolute;left:.35rem;top:.35rem;font-size:.62rem;background:rgba(15,23,42,.85);color:var(--text);border-radius:.3rem;padding:0 .3rem}
+.nomedia{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.8rem;background:#0f172a;text-align:center;padding:.5rem}
+.empty{grid-column:1/-1;color:var(--muted);font-size:.88rem;padding:.6rem;border:1px dashed var(--line);border-radius:.6rem}
+.ours figure.q.blank{border:1.5px dashed var(--plan);background:transparent}
+.ours .ph{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;background:repeating-linear-gradient(45deg,rgba(245,158,11,.06) 0 10px,transparent 10px 20px)}
+.ours .ico{font-size:2.4rem}.ours .planned{position:absolute;right:.4rem;top:.4rem;font-size:.66rem;background:var(--plan);color:#111;border-radius:.4rem;padding:0 .35rem;font-weight:700}
+footer{color:var(--muted);font-size:.78rem;margin-top:2rem;border-top:1px solid var(--line);padding-top:.6rem}
+</style></head>
+<body><div class="wrap">
+<header><button class="bell" id="bell" aria-label="decisions log" aria-expanded="false">🔔<span class="badge" id="badge" hidden></span></button>
+<div class="drawer" id="drawer" hidden><div class="dhead"><b>🔔 Decisions log</b><span class="muted" id="dcount"></span></div>
+<ol class="dlist"><li data-date="2026-09-24"><span class="when">2026-09-24</span><div>🎯 Alignment pass: title hook now also asks what a reward on every question adds; grid heading names the skills exact state buys; score table gains a Δ R1 minus R0 row and an RL-track row; plan step 5 packages SpatialGym-Bench as an environment.</div></li><li data-date="2026-09-24"><span class="when">2026-09-24</span><div>🏷️ Named: SpatialGym-100K (the dataset; 100K is the target size until the generator has run) and SpatialGym-Bench (the held-out twin test). Title hook: which spatial skills does exact simulator state buy that a million real photos cannot?</div></li><li data-date="2026-09-24"><span class="when">2026-09-24</span><div>✂️ Redundancy merges applied: the Five tests table folded into the OUR benchmark table, the rivals table lost its &quot;wall&quot; column, Fixes rows 1 to 4 point at the grid.</div></li><li data-date="2026-09-24"><span class="when">2026-09-24</span><div>🗂️ Page reorganized into three tabs: OURS novelty, Execution, Appendix; header rewritten as a problem statement.</div></li><li data-date="2026-09-24"><span class="when">2026-09-24</span><div>🎮 The RL track of OUR benchmark ships in v0 (frozen-seed prompt generator plus checker reward).</div></li><li data-date="2026-09-24"><span class="when">2026-09-24</span><div>📏 Trust in the sim test rests on the Spearman check of all arms against the five real tests; no real-photo anchor slice in v0.</div></li><li data-date="2026-09-24"><span class="when">2026-09-24</span><div>🧪 Dataset plus benchmark: OUR held-out twin test is the second contribution, frozen before generation and scored once per release; 🅿️1 moves to category 2 on the category grid (lab notes, private).</div></li><li data-date="2026-09-24"><span class="when">2026-09-24</span><div>🧾 Every arXiv ID in this plan was checked against the arXiv API; rival scoring facts come from rl_env_subjective_rewards.md (lab notes, private).</div></li><li data-date="2026-09-21"><span class="when">2026-09-21</span><div>🥊 Six rivals, all non-RL-native; claims on pre-registered subsets; untrained reference rows kept apart (see Plan 01 (lab notes, private)).</div></li><li data-date="2026-09-21"><span class="when">2026-09-21</span><div>🧾 Recipe R1 for every column: copy answers, then grade own tries (GRPO) with answer match plus format reward.</div></li><li data-date="2026-09-21"><span class="when">2026-09-21</span><div>📄 Plan compacted; sibling project: Plan 03, humanoid benchmark plus dataset (lab notes, private).</div></li></ol></div>
+<h1>SpatialGym-100K on SpatialGym-Bench: which spatial skills does exact simulator state buy that a million real photos cannot, and what does a reward on every question add?</h1><div class="pre"><ul>
+<li>🎥 <strong>The gap.</strong> Warehouse and smart-space cameras look down from 8 to 20 ft. Every public spatial training set looks from eye level, or asks four question types about stills with no people and no second view; none ships a reward interface for RL.</li>
+<li>📉 <strong>The stakes.</strong> On the five public tests that ask these questions, the best models score 31 to 60 percent; humans reach 97 on MMSI.</li>
+<li>🏭 <strong>The move.</strong> One simulator generator with exact answers and twin scenes trains a 3B model by grading its own tries and yields a held-out benchmark no model can memorize.</li>
+<li>🎯 <strong>The bet, pre-registered.</strong> One frozen recipe, six rivals, five tests we do not own: on the subsets our cameras cover, our data beats every rival, and the gap between copying answers and grading tries (R1 minus R0) shows what a reward on every question adds. A hypothesis until the score table has numbers.</li>
+</ul>
+</div></header>
+<div class="navs"><nav class="tabs lvl1" role="tablist"><button role="tab" data-node="ours-novelty" data-leaf="qualitative" aria-selected="false">💡 OURS novelty</button><button role="tab" data-node="execution" data-leaf="pipeline" aria-selected="false">🏭 Execution</button><button role="tab" data-node="appendix" data-leaf="limitations" aria-selected="false">📎 Appendix</button></nav><nav class="tabs lvl2" data-parent="ours-novelty" role="tablist"><button role="tab" data-node="ours-dataset" data-leaf="qualitative" aria-selected="false">📦 OURS dataset</button><button role="tab" data-node="our-benchmark" data-leaf="our-benchmark" aria-selected="false">🧪 OURS benchmark</button><button role="tab" data-node="grid-skills-bought" data-leaf="grid-skills-bought" aria-selected="false">🔁 Grid: rivals × tests</button><button role="tab" data-node="score-table" data-leaf="score-table" aria-selected="false">🏁 Score table</button></nav><nav class="tabs lvl3" data-parent="ours-dataset" role="tablist"><button role="tab" data-node="qualitative" data-leaf="qualitative" aria-selected="false">🔍 Qualitative</button><button role="tab" data-node="rivals" data-leaf="rivals" aria-selected="false">🥊 Rivals</button><button role="tab" data-node="rl-novelty" data-leaf="rl-novelty" aria-selected="false">💡 RL novelty</button></nav><nav class="tabs lvl2" data-parent="execution" role="tablist"><button role="tab" data-node="pipeline" data-leaf="pipeline" aria-selected="false">🏭 Pipeline</button><button role="tab" data-node="loop" data-leaf="loop" aria-selected="false">🔄 Autoresearch + RSI</button><button role="tab" data-node="recipe" data-leaf="recipe" aria-selected="false">🧾 Recipe</button><button role="tab" data-node="plan" data-leaf="plan" aria-selected="false">🗺️ Plan</button></nav><nav class="tabs lvl2" data-parent="appendix" role="tablist"><button role="tab" data-node="limitations" data-leaf="limitations" aria-selected="false">⛔ Limitations</button><button role="tab" data-node="fixes" data-leaf="fixes" aria-selected="false">🔧 Fixes</button><button role="tab" data-node="sources" data-leaf="sources" aria-selected="false">📚 Sources</button></nav></div>
+<section class="panel" id="tab-qualitative" role="tabpanel">
+  <p class="lede">What each training set actually looks like, from verified samples only: 🗃️ rows pulled from the Hugging Face viewer API or the repos' own files and 📄 example figures from the arXiv HTML of each paper, each with its source. Nothing here is generated or described from memory; a dataset with no verified sample says so. Fetched 2026-09-25.</p>
+  
+  <section class="rival">
+    <h3>🥊 Warehouse-500K (NVIDIA) <small>🟦 Isaac Sim Replicator RGB-D warehouses, about 95k frames · about 500k QA · <a href="https://arxiv.org/abs/2508.13564" target="_blank" rel="noopener">paper</a> · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse" target="_blank" rel="noopener">card</a></small></h3>
+    <p class="note">🗃️ gated set, fetched with an access-approved account: 8 rows from train_sample (2 per category: left_right, mcq, distance, count); numbered region outlines are painted from the rows' own RLE masks in the order of the &lt;mask&gt; tokens (click 'original' for the untouched frame); PNGs re-encoded as JPEG for the page</p>
+    <div class="qgrid">
+      <figure class="q row">
+        <div class=""><a href="assets/qual/warehouse500k/row_0_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/row_0_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/warehouse500k/row_0.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption><span class="tag">mcq</span> &lt;image&gt;
+Given the available transporters &lt;mask&gt; &lt;mask&gt; and pallets &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt;, which pallet is the best choice for automat
+          <div class="prov">🗃️ dataset row · nvidia/PhysicalAI-Spatial-Intelligence-Warehouse train_sample row 0 · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse/resolve/main/train_sample/images/054690.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/warehouse500k/row_1_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/row_1_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/warehouse500k/row_1.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption><span class="tag">mcq</span> &lt;image&gt;
+Which pallet from &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; is the most suitable for the transporter at &lt;mask&gt; to pick up? A: 1
+          <div class="prov">🗃️ dataset row · nvidia/PhysicalAI-Spatial-Intelligence-Warehouse train_sample row 1 · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse/resolve/main/train_sample/images/062723.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/warehouse500k/row_2_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/row_2_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/warehouse500k/row_2.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption><span class="tag">distance</span> Give me the distance from the pallet &lt;mask&gt; to the pallet &lt;mask&gt;. A: 9.81
+          <div class="prov">🗃️ dataset row · nvidia/PhysicalAI-Spatial-Intelligence-Warehouse train_sample row 2 · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse/resolve/main/train_sample/images/029734.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/warehouse500k/row_5_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/row_5_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/warehouse500k/row_5.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption><span class="tag">distance</span> Tell me the distance between the pallet &lt;mask&gt; and the pallet &lt;mask&gt;. A: 1.64
+          <div class="prov">🗃️ dataset row · nvidia/PhysicalAI-Spatial-Intelligence-Warehouse train_sample row 5 · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse/resolve/main/train_sample/images/073903.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/warehouse500k/row_6_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/row_6_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/warehouse500k/row_6.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption><span class="tag">count</span> &lt;image&gt;
+From the given buffer masks &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; and pallet masks &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt;, how many pallets 
+          <div class="prov">🗃️ dataset row · nvidia/PhysicalAI-Spatial-Intelligence-Warehouse train_sample row 6 · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse/resolve/main/train_sample/images/069631.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/warehouse500k/row_7_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/row_7_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/warehouse500k/row_7.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption><span class="tag">count</span> &lt;image&gt;
+Among the given buffer masks &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; and pallet masks &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;mask&gt; &lt;
+          <div class="prov">🗃️ dataset row · nvidia/PhysicalAI-Spatial-Intelligence-Warehouse train_sample row 7 · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse/resolve/main/train_sample/images/039571.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/warehouse500k/row_12_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/row_12_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/warehouse500k/row_12.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption><span class="tag">left_right</span> Is the pallet &lt;mask&gt; to the left of the pallet &lt;mask&gt; from the image's perspective? A: right
+          <div class="prov">🗃️ dataset row · nvidia/PhysicalAI-Spatial-Intelligence-Warehouse train_sample row 12 · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse/resolve/main/train_sample/images/032507.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/warehouse500k/row_21_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/row_21_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/warehouse500k/row_21.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption><span class="tag">left_right</span> From this viewpoint, does the buffer region &lt;mask&gt; appear on the left-hand side of the buffer region &lt;mask&gt;? A: right
+          <div class="prov">🗃️ dataset row · nvidia/PhysicalAI-Spatial-Intelligence-Warehouse train_sample row 21 · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse/resolve/main/train_sample/images/028419.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q figure">
+        <div class=""><a href="assets/qual/warehouse500k/card_fig_4_types.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/warehouse500k/card_fig_4_types.png" alt=""></a></div>
+        <figcaption>Four question categories of the PhysicalAI Spatial Intelligence Warehouse set with example questions and answers (public image embedded in the dataset card README).
+          <div class="prov">🖼️ card or README figure · dataset card card figure · <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure></div>
+  </section>
+
+  <section class="rival">
+    <h3>🥊 SAT-175K <small>🟦 ProcTHOR, 22k apartments, eye level · 175k QA · <a href="https://arxiv.org/abs/2412.07755" target="_blank" rel="noopener">paper</a> · <a href="https://huggingface.co/datasets/array/SAT" target="_blank" rel="noopener">card</a></small></h3>
+    <p class="note">🗃️ rows from array/SAT-v2, the re-upload the SAT card itself recommends (the array/SAT viewer fails with HTTP 500); question_type is 'other' for static rows, kind inferred from wording</p>
+    <div class="qgrid">
+      <figure class="q row">
+        <div class=""><a href="assets/qual/sat175k/row_0.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/sat175k/row_0.jpg" alt=""></a></div>
+        <figcaption><span class="tag">other</span> How many Chairs are visible in the scene? A: 3
+          <div class="prov">🗃️ dataset row · array/SAT-v2 train row 0 · <a href="https://datasets-server.huggingface.co/cached-assets/array/SAT-v2/--/77d83da806d0a31f837be7b36d0dfbda230d8864/--/default/train/0/images/image-1d100e9.jpg?Expires=1790247300&amp;Signature=HIMnlt4oSJgJRlVg1GpTUVEiCZ2OXUa97SlyhxQOPWTircOtgZZAFIZcYdGfXOqcq9pE7bptznFgBXR-ERlsPyp~rLW98ruYQ7J14mbjUWM6HUxmGjntD~WyyJuemkPd50vzz6Znn8vwFvOXVZfLsrbJdlp0CgYE1WDtCkqbYOTXgsVfJd-ig0d3Dc96DkqsfcZGm41SFdKaXi-upNWavQaCdNsgCQoB0Z~bmMUb3vgyqdsQ6av3HiPY96YElhItvHLQjFiAbhiXlXC7~Tsk-zhFO3~aVwmlAl-Ot65S01yAocRU5Bt25J~lNB4LyFahsBT8TLM88J~KiARWIsxCLw__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/sat175k/row_40006.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/sat175k/row_40006.jpg" alt=""></a></div>
+        <figcaption><span class="tag">other</span> Which object is closer to the camera taking this photo, black circular chair with four legs (highlighted by a red box) or blue armchair with wooden legs (highlighted by a blue box)? A: blue armchair with wooden legs (hig
+          <div class="prov">🗃️ dataset row · array/SAT-v2 train row 40006 · <a href="https://datasets-server.huggingface.co/cached-assets/array/SAT-v2/--/77d83da806d0a31f837be7b36d0dfbda230d8864/--/default/train/40006/images/image-1d100e9.jpg?Expires=1790247301&amp;Signature=qHldpcIp0YV8-9LButK6TixpYvqL85e9Y8gmd48I0GwxTPHV-CoZJ2Yssfv4PdtCByetdnVuMhDFo9hBgu~iWnHHU6XiAQblfSh3rT9WPbfI50gce6ssf59tBJSjeEd~fTTbeSiB~~xibCdxoUkQ4gH460M9pbyN2ZLD2OclGrGpONbM9CFIXq17txCMk0o3PwbJ9fmKTlsy-N8IZMF0-YU0QiV2-5uuk0QzEbY5sIIofWv4kffBgF3nssOJmGtgjrle88tyiHgsrMXmY9XmtvUJU8VDoe1PqMT735m~rubEBimzmI-Lz49-dRexYZ2GRlJxR896bsPQr7lI8tAnVw__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/sat175k/row_80001.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/sat175k/row_80001.jpg" alt=""></a></div>
+        <figcaption><span class="tag">other</span> Considering the relative positions, is white color chair (marked A) to the left or right of white color chair (marked C)? A: left
+          <div class="prov">🗃️ dataset row · array/SAT-v2 train row 80001 · <a href="https://datasets-server.huggingface.co/cached-assets/array/SAT-v2/--/77d83da806d0a31f837be7b36d0dfbda230d8864/--/default/train/80001/images/image-1d100e9.jpg?Expires=1790247302&amp;Signature=hIrbJGI7YJc3ZWqqR296BEmxnrQViBShQzcZGS0O7UgkV74qMqwG4i-vX~gvFHDIx7S~RfjokK6mYFgxFp8eLmc-4ZGYghAclrP1a~vsAMtKeOkr~hYYkGhQ2FX0AuA05wnZs1Z~iuokFML1cfkZ09q17FV2TocohDaTSCPAFZMEFsaEAVT-xIPE9v6sG85xFYmXVTe0yxdUPMJWTRkrpT92kEbAE~AnFwM1NPT2pXprZOq7wfHJXOwXjX7h5KQmqKrcC5dwNPd-d7LIxegeykpjAm4k~8axqfWOuC1Am2i3GTe1qhxBPE~~GfVNpukqvIn5gUMmob6~MNG36bek~A__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/sat175k/row_120008.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/sat175k/row_120008.jpg" alt=""></a></div>
+        <figcaption><span class="tag">other</span> Consider the 3D positions of the objects in the scene and not just the 2D positions in the image. Is the centerpoint of  twisted base floor lamp with white flared shade at a higher height than dark wooden bed frame with 
+          <div class="prov">🗃️ dataset row · array/SAT-v2 train row 120008 · <a href="https://datasets-server.huggingface.co/cached-assets/array/SAT-v2/--/77d83da806d0a31f837be7b36d0dfbda230d8864/--/default/train/120008/images/image-1d100e9.jpg?Expires=1790247303&amp;Signature=WHMlkOxJA9S1OUZb-Uh5PClZyfQADL-Z4VlMX2gq7oQFGQB1vfp0IeJzJyTBtYQTQYL1fe8WMAaCj9nC0eHtEjbY-8cfG62PI6gIVjQaG01AgomxFglY1neGHBP8tkGt0OB187BTqAEgRaUATFWwY8lj-k~MrXcmUBHIXYdGwlzqg~Kd5Qg6aFgvDNSS8bcNy9jH3arIOsX5a7Q22u3i2dDywasBfqvdm7skZhK00lmJKwWE-irOQjEpXAzBG9JobdQN0bJ9n9TqlE7~vg9gKWg76dOC-aIvnw56A-4w8DuJ9yutHnzwgujnHG62M0-snjpOlUgTiqscvIIWV5z3tQ__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/sat175k/row_160007.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/sat175k/row_160007.jpg" alt=""></a></div>
+        <figcaption><span class="tag">action_consequence</span> If I turn left by 40 degrees, will I be facing away from beige armchair with rounded arms (near the mark 6 in the image)? A: yes
+          <div class="prov">🗃️ dataset row · array/SAT-v2 train row 160007 · <a href="https://datasets-server.huggingface.co/cached-assets/array/SAT-v2/--/77d83da806d0a31f837be7b36d0dfbda230d8864/--/default/train/160007/images/image-1d100e9.jpg?Expires=1790247307&amp;Signature=ZRuDGdLcGDwVoz0F~CxtGfCmDZ--jrMkDoMKshiRVtiBuiVekf51yIVMoQqg6XjvISlcKCrlyHatPkb62KW8TcvQkTWejYmBjLyUc6tMQy7Ssii3J-bo7AtemBfjFldMCbK3qoN-QBQmkM14sXbtIok5to3si8FIhcAjuYD2R0C8EQfFJboE6sGfzWh0m0Vnky7OW~fvF5esTWs5m1RyqUGiH41-FV1wqruxh2KFxft-Vjn7h3M1qMUm6U02Qx7p2qqG63NflWIdY8Tp2OUX8jURbdokSzzCUmBeLBgXm~NdgSr4Rdl65ahhJnqm51n84qrTLsPnt~4ncoYkJ9ihmg__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/sat175k/row_160009.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/sat175k/row_160009.jpg" alt=""></a></div>
+        <figcaption><span class="tag">goal_aim</span> I need to go to black octagon armchair with green cushion (near the mark 7 in the image). Which direction should I turn to face the object? A: left by 26 degrees
+          <div class="prov">🗃️ dataset row · array/SAT-v2 train row 160009 · <a href="https://datasets-server.huggingface.co/cached-assets/array/SAT-v2/--/77d83da806d0a31f837be7b36d0dfbda230d8864/--/default/train/160009/images/image-1d100e9.jpg?Expires=1790247306&amp;Signature=p6J27gZXmFsbueGPaVR56lk9oLpOpoAwPag-lvd3g1yeMaIXHhvaLkel-iLxiUQAgRAuPz~6bmMJ-GbGy2MtUXC0uq0S7Pr2MIQ8kKwL3NcrEZAw1038HIiKagGJ6ziVT6xPgri5gzgfuKpVB-lXe4WGn62xjU7x4JUr~tlZz7h4e1iv6mPQrhqQ2qONJgSb9ilhwceA~vBb3pnoUZyRxuR-WZmn7XHpopWBOhjMFexWxZ2zCgdI9DFzTPjFvn~y5jwNi5uYi17lo09MfzTl3c5Gc70d5ftlbLqz9s2-9lndC9k~ySRA-8tkYEdvyQf8oYKCMJfWI~rkA9rvmk4eVw__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/sat175k/row_160013.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/sat175k/row_160013.jpg" alt=""></a></div>
+        <figcaption><span class="tag">action_sequence</span> The first image is from the beginning of the video and the second image is from the end. How did the camera rotate from the first image to the second image? A: rotated right and moved forward
+          <div class="prov">🗃️ dataset row · array/SAT-v2 train row 160013 · <a href="https://datasets-server.huggingface.co/cached-assets/array/SAT-v2/--/77d83da806d0a31f837be7b36d0dfbda230d8864/--/default/train/160013/images/image-1d100e9.jpg?Expires=1790247304&amp;Signature=t4cuIjrq4~QkQeDddXD9wijeHEfixoqarGkfuI4xBfH2lMvQ~LhMjqMocJNVk1KLstZVop04rnt5Yrs6JezwJDDXoo53z~smqdnigLdKS0UUTD8tdWbORxOuhIr81wrFKutVyPGyCFYokX8qP6LHwTth1w302oyNJJvIkVOGM154Iuz25af3HEhZZ7Rp9BUaG73BiX7Q-Xyv0VdoZi4rV5wuigAEO-0zoTz4Wl8KGX2gfeM5yCV1b7xaVHL0W4k9jqDPyxn8n1fmTDDO-PHr7LCkWaqTt9DZIBwkXxDY1m71Qa-67t89uc4booUpAmPPrNMYPvT4D~g7~R0dT4IwWw__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/sat175k/row_160021.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/sat175k/row_160021.jpg" alt=""></a></div>
+        <figcaption><span class="tag">obj_movement</span> Were any of the objects in the initial frame that you can still see in the second frame moved from their original positions? A: no objects moved
+          <div class="prov">🗃️ dataset row · array/SAT-v2 train row 160021 · <a href="https://datasets-server.huggingface.co/cached-assets/array/SAT-v2/--/77d83da806d0a31f837be7b36d0dfbda230d8864/--/default/train/160021/images/image-1d100e9.jpg?Expires=1790247305&amp;Signature=Tq2B~vN8fBGt1~Cs12wxtScgDqCamk4HIsj~IdgPQy5Bzzq11iMDTx8oP94v4zyDMaTkcgZSIN6sJ1wyE9ajHGCw1SbS7w8ktlV1dyEm5d3JvyuIKpD6hP7wr0bEqvZ8~VZqNoVuTPHs9vANYBmUwHYPkQ6nmCi135Tg4BL~jHJvD3OoFiUXrrmFx~X-CAPTZ5npDFIdkHx-fxqNX-h6KOdtj3ACRCJntsxXwa3uLZl1buQu51ktyyUXtNM5G1BhQ~TsGEQAspNKPupiEiCjHujbxPfpRxtSnCGA5DkWqnVfrFUJiInMWmxNqzV9Yt-6Zfl32HNDmaZAzAdjOA3MRw__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure></div>
+  </section>
+
+  <section class="rival">
+    <h3>🥊 VSI-590K (Cambrian-S) <small>🟪 5 real scan sets, ProcTHOR walks, Hypersim, web tours · 590k QA · <a href="https://arxiv.org/abs/2511.04670" target="_blank" rel="noopener">paper</a> · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K" target="_blank" rel="noopener">card</a></small></h3>
+    <p class="note">🗃️ six frames extracted from robotics.tar.gz (the smallest archive, 1.1 GB); the other sources sit inside 3 to 90 GB archives, so those rows show the question and answer only; the paper filmstrips show their look</p>
+    <div class="qgrid">
+      <figure class="q row">
+        <div class=""><a href="assets/qual/vsi590k/row_550922.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/vsi590k/row_550922.jpg" alt=""></a></div>
+        <figcaption><span class="tag">relative_direction_camera</span> &lt;image&gt;
+From the camera's viewpoint, is the table positioned on the left-hand side or right-hand side?
+Options:
+A. left
+B. right
+Answer with the option's letter from the given choices directly. A: A
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 550922 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/robotics.tar.gz" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/vsi590k/row_550923.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/vsi590k/row_550923.jpg" alt=""></a></div>
+        <figcaption><span class="tag">relative_count</span> &lt;image&gt;
+Comparing quantities, does chairs have fewer items than, more items than, or an equal number of items relative to tables?
+Options:
+A. more
+B. equal
+C. fewer
+Answer with the option's letter from the given ch
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 550923 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/robotics.tar.gz" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/vsi590k/row_550932.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/vsi590k/row_550932.jpg" alt=""></a></div>
+        <figcaption><span class="tag">relative_distance_camera</span> &lt;image&gt;
+When measuring from the camera, which would require less distance to reach: a mechanical_arm or a table?
+Options:
+A. table
+B. mechanical_arm
+Answer with the option's letter from the given choices directly. 
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 550932 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/robotics.tar.gz" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/vsi590k/row_550995.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/vsi590k/row_550995.jpg" alt=""></a></div>
+        <figcaption><span class="tag">absolute_count</span> &lt;image&gt;
+What's the precise number of chairs present?
+Please answer the question using a single number. A: 4
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 550995 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/robotics.tar.gz" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/vsi590k/row_555913.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/vsi590k/row_555913.jpg" alt=""></a></div>
+        <figcaption><span class="tag">relative_distance_object</span> &lt;image&gt;
+Which has less distance between it and the cup: a mechanical_arm or a chips?
+Please answer the question using a single words A: chips
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 555913 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/robotics.tar.gz" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/vsi590k/row_550957.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/vsi590k/row_550957.jpg" alt=""></a></div>
+        <figcaption><span class="tag">relative_direction_object</span> &lt;image&gt;
+While the table is oriented towards the sofa, how would you describe the mattress's position relative to the table?
+Options:
+A. right
+B. back
+C. left
+Answer with the option's letter from the given choices d
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 550957 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/robotics.tar.gz" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q video">
+        <div class="nomedia">🎬 frames inside the archive, not downloaded</div>
+        <figcaption><span class="tag">absolute_distance_object</span> &lt;image&gt;
+These are frames of a video.
+Specify precisely how far apart the whiteboard and the telephone are at their closest points, expressed in centimeters.
+Please answer the question using a single word or phrase.
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 155095 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/vsi_590k.jsonl" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q video">
+        <div class="nomedia">🎬 frames inside the archive, not downloaded</div>
+        <figcaption><span class="tag">absolute_size_object</span> &lt;image&gt;
+These are frames of a video.
+Give the longest dimension of the window in feet.
+Please answer the question using a single word or phrase. A: 6.8
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 379566 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/vsi_590k.jsonl" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q video">
+        <div class="nomedia">🎬 frames inside the archive, not downloaded</div>
+        <figcaption><span class="tag">relative_size_object</span> &lt;image&gt;
+These are frames of a video.
+Between the fridge and the laundry basket, which object's longest edge appears the shorter?
+Options:
+A. laundry basket
+B. fridge
+Answer with the option's letter from the given c
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 507343 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/vsi_590k.jsonl" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q video">
+        <div class="nomedia">🎬 frames inside the archive, not downloaded</div>
+        <figcaption><span class="tag">appearance_order</span> &lt;image&gt;
+These are frames of a video.
+What will be the first-time appearance order of the following categories in the video: shelving unit, doorway, window, arm chair?
+A. arm chair, shelving unit, doorway, window
+B.
+          <div class="prov">🗃️ dataset row · nyu-visionx/VSI-590K train row 530834 · <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K/resolve/main/vsi_590k.jsonl" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure></div>
+  </section>
+
+  <section class="rival">
+    <h3>🥊 OSD-8.7M (SpatialRGPT) <small>🟩 OpenImages, 1M photos, 5M regions · 8.7M QA · <a href="https://arxiv.org/abs/2406.01584" target="_blank" rel="noopener">paper</a> · <a href="https://huggingface.co/datasets/a8cheng/OpenSpatialDataset" target="_blank" rel="noopener">card</a></small></h3>
+    <p class="note">🗃️ the HF repo is annotation-only; photos fetched by id from the official Open Images bucket (image size matched each row's mask size); Region [0] and Region [1] outlines are painted from the rows' own RLE masks for the first question (click 'original' for the plain photo)</p>
+    <div class="qgrid">
+      <figure class="q row">
+        <div class=""><a href="assets/qual/osd87m/row_0_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/osd87m/row_0_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/osd87m/row_0.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption>&lt;image&gt;
+Does &lt;mask&gt; &lt;depth&gt; have a greater width compared to &lt;mask&gt; &lt;depth&gt;? A: In fact, Region [0] might be narrower than Region [1].
+          <div class="prov">🗃️ dataset row · a8cheng/OpenSpatialDataset train row 0 · <a href="https://s3.amazonaws.com/open-images-dataset/train/da0f505346a22fa7.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/osd87m/row_1_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/osd87m/row_1_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/osd87m/row_1.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption>&lt;image&gt;
+You are a mechanic and you need to store &lt;mask&gt; &lt;depth&gt; in a storage room. The storage room has shelves that are 3.5 feet high. Can you store &lt;mask&gt; &lt;depth&gt; on the shelves? A: No, Re
+          <div class="prov">🗃️ dataset row · a8cheng/OpenSpatialDataset train row 1 · <a href="https://s3.amazonaws.com/open-images-dataset/train/7f2874b7ef878ac3.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/osd87m/row_2_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/osd87m/row_2_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/osd87m/row_2.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption>&lt;image&gt;
+You are a tourist looking at a map of a city. You see a house represented by &lt;mask&gt; &lt;depth&gt; and a land vehicle represented by &lt;mask&gt; &lt;depth&gt;. Which one is higher in elevation? A: The
+          <div class="prov">🗃️ dataset row · a8cheng/OpenSpatialDataset train row 2 · <a href="https://s3.amazonaws.com/open-images-dataset/train/1d8d9bf7444d6051.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/osd87m/row_3_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/osd87m/row_3_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/osd87m/row_3.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption>&lt;image&gt;
+You are a photographer taking a picture of two people. You want to capture both faces in the frame. If you are standing 20 inches away from &lt;mask&gt; &lt;depth&gt;, how far away are you from &lt;mask&gt;
+          <div class="prov">🗃️ dataset row · a8cheng/OpenSpatialDataset train row 3 · <a href="https://s3.amazonaws.com/open-images-dataset/train/92a006612883263c.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/osd87m/row_4_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/osd87m/row_4_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/osd87m/row_4.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption>&lt;image&gt;
+Can you confirm if &lt;mask&gt; &lt;depth&gt; is wider than &lt;mask&gt; &lt;depth&gt;? A: Indeed, Region [0] has a greater width compared to Region [1].
+          <div class="prov">🗃️ dataset row · a8cheng/OpenSpatialDataset train row 4 · <a href="https://s3.amazonaws.com/open-images-dataset/train/d32c83b71e49f007.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/osd87m/row_5_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/osd87m/row_5_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/osd87m/row_5.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption>&lt;image&gt;
+Does &lt;mask&gt; &lt;depth&gt; come behind &lt;mask&gt; &lt;depth&gt;? A: Yes, it is.
+          <div class="prov">🗃️ dataset row · a8cheng/OpenSpatialDataset train row 5 · <a href="https://s3.amazonaws.com/open-images-dataset/train/6a51238edbd16c79.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/osd87m/row_6_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/osd87m/row_6_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/osd87m/row_6.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption>&lt;image&gt;
+What is the vertical distance between &lt;mask&gt; &lt;depth&gt; and &lt;mask&gt; &lt;depth&gt;? A: Region [0] is 39.78 centimeters away from Region [1] vertically.
+          <div class="prov">🗃️ dataset row · a8cheng/OpenSpatialDataset train row 6 · <a href="https://s3.amazonaws.com/open-images-dataset/train/e50e5b0af15b9026.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/osd87m/row_7_masks.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/osd87m/row_7_masks.jpg" alt=""></a><span class="dtag">regions drawn · <a href="assets/qual/osd87m/row_7.jpg" target="_blank" rel="noopener">original</a></span></div>
+        <figcaption>&lt;image&gt;
+How big is &lt;mask&gt; &lt;depth&gt; in terms of width? A: It is 12.57 inches.
+          <div class="prov">🗃️ dataset row · a8cheng/OpenSpatialDataset train row 7 · <a href="https://s3.amazonaws.com/open-images-dataset/train/537bf407534a8946.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure></div>
+  </section>
+
+  <section class="rival">
+    <h3>🥊 SpatialQA-50K (SpatialBot) <small>🟩 COCO, Visual Genome, robot frames · about 50k images · <a href="https://arxiv.org/abs/2406.13642" target="_blank" rel="noopener">paper</a> · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA" target="_blank" rel="noopener">card</a></small></h3>
+    <p class="note">🗃️ gated set, fetched with an access-approved account: rows from the head of SpatialQA.json; 2d3ds and NYU Depth v2 images (with depth maps) pulled from the repo zips; low and middle level images live in the Bunny_695k data, so those two rows are text-only</p>
+    <div class="qgrid">
+      <figure class="q annotation-only">
+        <div class="nomedia">🧾 text only: the image is hosted outside this repo (see the note above)</div>
+        <figcaption><span class="tag">visual_genome</span> &lt;image 1&gt;
+&lt;image 2&gt;
+Could you elaborate on the depth measurement of point (0.71, 0.44)? Estimate depth from the depth map directly. A: Point (0.71, 0.44) reflects a depth of 5440.
+          <div class="prov">🗃️ dataset row · RussRobin/SpatialQA train row 1 · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA/resolve/main/SpatialQA.json" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q annotation-only">
+        <div class="nomedia">🧾 text only: the image is hosted outside this repo (see the note above)</div>
+        <figcaption><span class="tag">visual_genome</span> &lt;image 1&gt;
+&lt;image 2&gt;
+Please provide me with the depth assessment of point (0.43, 0.66)? Estimate depth from the depth map directly. A: Point (0.43, 0.66) reflects a depth measurement of 9897.
+          <div class="prov">🗃️ dataset row · RussRobin/SpatialQA train row 7 · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA/resolve/main/SpatialQA.json" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class="pair"><a href="assets/qual/spatialqa50k/row_211.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/spatialqa50k/row_211.png" alt=""></a><a href="assets/qual/spatialqa50k/row_211_depth.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/spatialqa50k/row_211_depth.png" alt="depth map"></a><span class="dtag">RGB + depth</span></div>
+        <figcaption><span class="tag">nyudepthv2</span> &lt;image 1&gt;
+&lt;image 2&gt;
+What can you tell me about the furniture in this image? A: The image shows a dining room with a large rectangular dining table in the center, surrounded by eight chairs. There is 
+          <div class="prov">🗃️ dataset row · RussRobin/SpatialQA train row 211 · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA/resolve/main/nyudepthv2.zip member nyudepthv2/1433.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class="pair"><a href="assets/qual/spatialqa50k/row_304.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/spatialqa50k/row_304.png" alt=""></a><a href="assets/qual/spatialqa50k/row_304_depth.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/spatialqa50k/row_304_depth.png" alt="depth map"></a><span class="dtag">RGB + depth</span></div>
+        <figcaption><span class="tag">nyudepthv2</span> &lt;image 1&gt;
+&lt;image 2&gt;
+What is on top of the bookshelf? A: There are various items on top of the bookshelf, including a stack of colorful folders, a decorative box, a toy, and som
+          <div class="prov">🗃️ dataset row · RussRobin/SpatialQA train row 304 · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA/resolve/main/nyudepthv2.zip member nyudepthv2/1068.png" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/spatialqa50k/row_359.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/spatialqa50k/row_359.jpg" alt=""></a></div>
+        <figcaption><span class="tag">2d3ds</span> &lt;image 1&gt;
+&lt;image 2&gt;
+How many compartments does the sink have? A: The sink has two compartments.
+          <div class="prov">🗃️ dataset row · RussRobin/SpatialQA train row 359 · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA/resolve/main/2d3ds.zip member 2d3ds/5a6c2f6709a2494db20b708b0e933432_i2_5.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/spatialqa50k/row_619.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/spatialqa50k/row_619.jpg" alt=""></a></div>
+        <figcaption><span class="tag">2d3ds</span> &lt;image 1&gt;
+&lt;image 2&gt;
+Which object is larger in size, the hook or the hinge? A: The hinge is larger in size than the hook.
+          <div class="prov">🗃️ dataset row · RussRobin/SpatialQA train row 619 · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA/resolve/main/2d3ds.zip member 2d3ds/17ee032c9ed84d60a5c0719cbd36177c_i0_2.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/spatialqa50k/row_646.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/spatialqa50k/row_646.jpg" alt=""></a></div>
+        <figcaption><span class="tag">2d3ds</span> &lt;image 1&gt;
+&lt;image 2&gt;
+What is the spatial relationship between the fire alarm and the window? A: The fire alarm is to the right of the window.
+          <div class="prov">🗃️ dataset row · RussRobin/SpatialQA train row 646 · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA/resolve/main/2d3ds.zip member 2d3ds/5cd33e528cb846d190946808f4a1aefd_i0_0.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/spatialqa50k/row_841.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/spatialqa50k/row_841.jpg" alt=""></a></div>
+        <figcaption><span class="tag">2d3ds</span> &lt;image 1&gt;
+&lt;image 2&gt;
+How many chairs are at the table? A: There are two chairs at the table.
+          <div class="prov">🗃️ dataset row · RussRobin/SpatialQA train row 841 · <a href="https://huggingface.co/datasets/RussRobin/SpatialQA/resolve/main/2d3ds.zip member 2d3ds/7a42df17b40c4c15bfd6301823b6a476_i2_4.jpg" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure></div>
+  </section>
+
+  <section class="rival">
+    <h3>🥊 RoboSpatial-1M <small>🟩 ScanNet, Matterport3D, 3RScan, HOPE, GraspNet scans · about 1M images, 3M QA · <a href="https://arxiv.org/abs/2411.16537" target="_blank" rel="noopener">paper</a> · <a href="https://huggingface.co/datasets/chanhee-luke/RoboSpatial-Home" target="_blank" rel="noopener">card</a></small></h3>
+    <p class="note">🗃️ the 1M training set has no public repo (only the generator code); rows come from the RoboSpatial-Home benchmark, same question families</p>
+    <div class="qgrid">
+      <figure class="q row">
+        <div class=""><a href="assets/qual/robospatial1m/row_compatibility_17.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/robospatial1m/row_compatibility_17.jpg" alt=""></a></div>
+        <figcaption><span class="tag">compatibility</span> Can the cup fit above the counter? Answer yes or no. A: Yes
+          <div class="prov">🗃️ dataset row · chanhee-luke/RoboSpatial-Home compatibility row 17 · <a href="https://datasets-server.huggingface.co/cached-assets/chanhee-luke/RoboSpatial-Home/--/7ef1b43b20087ef284e0e9017ef51dd143814c59/--/default/compatibility/17/img/image.jpg?Expires=1790247413&amp;Signature=AoHckGyqAqqB6W24x0N8-Mf1Yfwf1YfFRK5P~LDuKXkSX0VlB~Nue5wzi3VFdo1BTH74~rs8VVB5YNss-76NKBLoHF6syP6lHqVA7i0tpPzCFUBDLyMTwIF3P2KBsmOm46ZRe6KtchnI8c6e-oUm1nktR7M8lHld6wlw9OPXKsfXlUwT~bcyorJ1pkyhJQ4fcwHLVfOLkuwHoQw3wdsTjvxaq-R4rVVZ8p7PEA01kp8kV1-OEbI~FNKIaNVu2wRZVBDNqUAnTGP7xwLd6X3pPjYz2A8~IeW668D4zotVcmpSmv2ndxmhIjj9bykEtWHF9vQOzltkiBmHtmr2gC7ncg__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/robospatial1m/row_compatibility_63.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/robospatial1m/row_compatibility_63.jpg" alt=""></a></div>
+        <figcaption><span class="tag">compatibility</span> Can the microwave fit in front of the fridge? Answer yes or no. A: Yes
+          <div class="prov">🗃️ dataset row · chanhee-luke/RoboSpatial-Home compatibility row 63 · <a href="https://datasets-server.huggingface.co/cached-assets/chanhee-luke/RoboSpatial-Home/--/7ef1b43b20087ef284e0e9017ef51dd143814c59/--/default/compatibility/63/img/image.jpg?Expires=1790247515&amp;Signature=kP2i3el7h7iBR91MJYw-FRobKalcvnsaJG7TnVFhq5cRjuAvHrvoqNm90PSA2QiijUdeEZL8jRKc2n9gGTbmRY7z~H55X6jqZhz3nKc-K0NTs7V-p4khBeVfUgx4mdbhhdyX4UxLg0PGEHMUsmiXlNVNWuIMBSG3PX-u8V8TsDGUoAg1JlAg1ukvjrAxU0w9Qq~SsHWVF8x8vGMxF-8ZNwsv9Wc4D81EUOL6trUkYatvx-O4OFWpkj2G7~xIlV9Q1UMIOnWqGnSqViS0rsJBz2MucTzH2nwSe1NoYIFgQsjB7V1tJGGVoK7resW6-Lo~S36rj1VVsDk-Ywhk8NL1sw__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/robospatial1m/row_compatibility_70.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/robospatial1m/row_compatibility_70.jpg" alt=""></a></div>
+        <figcaption><span class="tag">compatibility</span> Can the TV fit in front of the media console? Answer yes or no. A: Yes
+          <div class="prov">🗃️ dataset row · chanhee-luke/RoboSpatial-Home compatibility row 70 · <a href="https://datasets-server.huggingface.co/cached-assets/chanhee-luke/RoboSpatial-Home/--/7ef1b43b20087ef284e0e9017ef51dd143814c59/--/default/compatibility/70/img/image.jpg?Expires=1790247322&amp;Signature=j2lfEXShmxsFI0WsYDCJJiAnQiAZ1jNrKeVOdjVQre-eIGdRE8AZMfhh4VpDJc23XCHPASVN2jLvP9u1E9OKazY5rfidqsrMZFtuZ0K8cFiznwYRL0YKO12cuo7VtudNE8aRq6hBsPUW2oifJgMOjko8PFGtWKxf0fICUq9YSmxSol6rqHpf1xcrt4KMNTl7-bIq6up~ERq9R1RpfztTRmI8dXK7TLAfzLssyT02eByrOOVLJ3eK-J1tsksThgqQJd~Jy5MKoY76bXzhNvHuFMOzyvcYQ9DRxK6ALo-HyThQfO-SW9FpDHS79v2k17SMgKBjM9LeKTB0B9fCwinXiA__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/robospatial1m/row_configuration_0.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/robospatial1m/row_configuration_0.jpg" alt=""></a></div>
+        <figcaption><span class="tag">configuration</span> Is the picture above the desk? Answer yes or no. A: Yes
+          <div class="prov">🗃️ dataset row · chanhee-luke/RoboSpatial-Home configuration row 0 · <a href="https://datasets-server.huggingface.co/cached-assets/chanhee-luke/RoboSpatial-Home/--/7ef1b43b20087ef284e0e9017ef51dd143814c59/--/default/configuration/0/img/image.jpg?Expires=1790247313&amp;Signature=tRiHZwZ3EyNOrK1ZzGSNYCXHjoj1AAN9~oQdH55qdqbnpOzVLHoblk~txN5GY6pBRsjKDUC6wwc~veruPRunlA3C2GqK3HhOJicqoBp1sqNGWkY5tFB2MW6csQLa8zJDhyV8JP-jQi7Gkg5N2xAjTK2mKn2scBnIbHH4WeyIwVsSdCj6zv79ZXDl~ClE-tjsagbgLAkiq7UhNYhNGXvTc12i0IS2cG1CJPCsCklAecpHMN80fQti8EGCsAyz0WOdoC8wYHwBghe9YpvlQXuKCQvQovHtZUNloV6XfHcWzlLORbShTkGDtRgoZD0MGRVWhZUKB1Z9OVHX2heGujL-cw__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/robospatial1m/row_configuration_41.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/robospatial1m/row_configuration_41.jpg" alt=""></a></div>
+        <figcaption><span class="tag">configuration</span> Is the chair left of the desk? Answer yes or no. A: No
+          <div class="prov">🗃️ dataset row · chanhee-luke/RoboSpatial-Home configuration row 41 · <a href="https://datasets-server.huggingface.co/cached-assets/chanhee-luke/RoboSpatial-Home/--/7ef1b43b20087ef284e0e9017ef51dd143814c59/--/default/configuration/41/img/image.jpg?Expires=1790247316&amp;Signature=UpZc3pGJtvn7t1nYD5aL72F97NBIFxaiceZ8YB1C7yD2gPehhc2yRn9eCX5DYI-D6AlEyMAF~Xtl0dJiX7zRHMUii1ureT6u-9pXSISD-~VBLMkt9zGHNmz~PGAUOZYX45Nm8K5BeQW4v~RLw33ZWtCfqTa4iIaGXPzUwV20ef98l-OR2DbGIA6oO3IUfyaHMOU36pAeQMf18-ED5b~5En~QKLRZ9~YHmxpNE4WmhQjRVmYlmnW-VffaoIC472JH1rICb5CeRklc~LrGbiR8jzp2c3ljSLugookrKnUku4D9iNR-7mGX-eg0wFM3Yuy3E0Fa9myGH0twMvxuntChLQ__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/robospatial1m/row_configuration_82.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/robospatial1m/row_configuration_82.jpg" alt=""></a></div>
+        <figcaption><span class="tag">configuration</span> Is the cat tower right of the chair? Answer yes or no. A: Yes
+          <div class="prov">🗃️ dataset row · chanhee-luke/RoboSpatial-Home configuration row 82 · <a href="https://datasets-server.huggingface.co/cached-assets/chanhee-luke/RoboSpatial-Home/--/7ef1b43b20087ef284e0e9017ef51dd143814c59/--/default/configuration/82/img/image.jpg?Expires=1790247319&amp;Signature=RqUHma35OA5SZ~P4n4Qw8Nsb4mEAKgAJb801Y1EnZheiO0kbWGfJ6rDzt7jsB8ktcAX1Fp4sIEUHkPTB-FIqVNUvKqxSxESBW~syfgvUxtNoaFRKXVGJVkW6qJ0AkVB2H1GqKreMbnMAoDPaYazHw6~Fa-BFZCg1wH-~nT3adm~EfP5OvZQPCGHcCzdbjH4XbfEgK6k5dH3VTQ2eMLHvmID45EJcBDXvoWBxR~0uzntf7iYnFNChS5BaTulEB4XdoF5GOB5HHo2VriqmCvqLkbn6xE-CT-C~XgDROcwLjJEJcTeGEx42uZj8y6FbcWNZtYAACKx9CMG~bxPYIhZk2g__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/robospatial1m/row_context_30.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/robospatial1m/row_context_30.jpg" alt=""></a></div>
+        <figcaption><span class="tag">context</span> In the image, there is a rug. Pinpoint several points within the vacant space situated to the in front of the rug. Your answer should be formatted as a list of tuples, i.e. [(x1, y1), ...], where each tuple contains the 
+          <div class="prov">🗃️ dataset row · chanhee-luke/RoboSpatial-Home context row 30 · <a href="https://datasets-server.huggingface.co/cached-assets/chanhee-luke/RoboSpatial-Home/--/7ef1b43b20087ef284e0e9017ef51dd143814c59/--/default/context/30/img/image.jpg?Expires=1790247413&amp;Signature=V70RU9rbUvzvn3mnI7k0EBuJL5q7uxV1WpteVNUYURYmY6J1F3TwDRBb5KAIV6Lrl0KOE1bMQDDFHNQEVIln0RxmbE9m~rN2iUXw0aX435Cc0PjExjhn-LCD0Fqu-DYoDeQwNz2~NGC6tDvG5dZIhF70s6cTd8ydf41mnrYa9D9jRUlUTa--hTaaoz8jhW6eqrEnnpQNVDgOlGRHxOqtSG7EGjGtSZhGY1sVjCt4o5wTer2L~EnlhEv8HPhG1REwF3jB511YNfBdJv2mcZWhw7Yr0TZFXrs6~5YipQb5Vug1KgUm0ayXg8hMtLRotlcv77w-o2iWAa0jRiio7Cr42w__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure>
+      <figure class="q row">
+        <div class=""><a href="assets/qual/robospatial1m/row_context_61.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/qual/robospatial1m/row_context_61.jpg" alt=""></a></div>
+        <figcaption><span class="tag">context</span> In the image, there is a curtain. Pinpoint several points within the vacant space situated to the in front of the curtain. Your answer should be formatted as a list of tuples, i.e. [(x1, y1), ...], where each tuple conta
+          <div class="prov">🗃️ dataset row · chanhee-luke/RoboSpatial-Home context row 61 · <a href="https://datasets-server.huggingface.co/cached-assets/chanhee-luke/RoboSpatial-Home/--/7ef1b43b20087ef284e0e9017ef51dd143814c59/--/default/context/61/img/image.jpg?Expires=1790247324&amp;Signature=UdhKRleVci4C7YE0bz8mzrEB-VFVa78Ri20SnSvlvKRYam~93gBrC7fqUDIzj7Tsk3UVRTB2i8T2-BFj4bKG5pkJN--2fftD7hC3-wG5PHhLtAPi9LkGhoe5ZB47tM1QOtWXqE8abNgj6T8DhWKpnRB7p99LQZ8nwt7UcxSTMSEW1pL0D1DWsoxMZzkYivY4rxXS~4~96i2rO92xjLQAx~nMkx3AH4yqby5zZNue4wnF7YKBZG4y1MCHMKeI8XU70QNW85xhMVS76zX8vJ5pWNRCX0dGco38fyeehKfH2ejrwIvlRe9VVGII3z~KOp6op02-JDYAoi7he-vE~xdG~w__&amp;Key-Pair-Id=K3C0L9WB6U5DUC" target="_blank" rel="noopener">source</a></div>
+        </figcaption>
+      </figure></div>
+  </section>
+  
+  <section class="rival ours">
+    <h3>🏁 OURS: SpatialGym-100K (dataset) and SpatialGym-Bench (environment) <small>🟦 Isaac Sim, SimReady warehouses and smart spaces, fixed cameras · planned, nothing rendered yet</small></h3>
+    <div class="qgrid">
+      <figure class="q blank">
+        <div class="ph"><span class="ico">📷</span><span class="planned">planned</span></div>
+        <figcaption><b>fixed-camera still</b> warehouse aisle from 8 to 20 ft, 30 to 60 deg tilt; RGB, depth, masks, 3D boxes (VANTAGE camera prior)</figcaption>
+      </figure>
+      <figure class="q blank">
+        <div class="ph"><span class="ico">🔁</span><span class="planned">planned</span></div>
+        <figcaption><b>twin pair</b> same scene, ONE object moved; same question, flipped answer; built from exact state, not edited by an LLM</figcaption>
+      </figure>
+      <figure class="q blank">
+        <div class="ph"><span class="ico">🎥</span><span class="planned">planned</span></div>
+        <figcaption><b>posed multi-view set</b> three cameras of one scene with known poses; camera-camera and region-region relations (MMSI style)</figcaption>
+      </figure>
+      <figure class="q blank">
+        <div class="ph"><span class="ico">🧍</span><span class="planned">planned</span></div>
+        <figcaption><b>person with exact orientation</b> &quot;from the worker's view, where is the pallet?&quot;; 18 direction bins (ViewSpatial human-perspective tasks)</figcaption>
+      </figure>
+      <figure class="q blank">
+        <div class="ph"><span class="ico">⏱️</span><span class="planned">planned</span></div>
+        <figcaption><b>event clip</b> forklift near-miss; event start and end from the event log; per-frame poses give track IoU (VANTAGE timing, tracking)</figcaption>
+      </figure>
+      <figure class="q blank">
+        <div class="ph"><span class="ico">📐</span><span class="planned">planned</span></div>
+        <figcaption><b>graded checker item</b> &quot;distance between the cart and the door?&quot; answer 4.2 m; credit bands within 10 and 25 percent</figcaption>
+      </figure>
+      <figure class="q blank">
+        <div class="ph"><span class="ico">🎚️</span><span class="planned">planned</span></div>
+        <figcaption><b>difficulty knobs</b> occlusion 40 percent, 12 objects, tilt 55 deg, distance ratio 1.3 logged per item; pass rate per bin</figcaption>
+      </figure>
+      <figure class="q blank">
+        <div class="ph"><span class="ico">🎮</span><span class="planned">planned</span></div>
+        <figcaption><b>RL prompt with typed negative</b> generator seed plus checker as the reward; the DPO rejected answer is the mirror-flip failure</figcaption>
+      </figure>
+      <figure class="q blank">
+        <div class="ph"><span class="ico">🕹️</span><span class="planned">planned</span></div>
+        <figcaption><b>environment step</b> reset(seed) returns a fresh image set and question; step(answer) returns graded credit from the checker plus the twin verdict; SpatialGym-Bench is this loop with frozen seeds</figcaption>
+      </figure>
+    </div>
+    <p class="note">🧪 Test split, frozen before training: held-out camera levels 14 to 20 ft, scenes 41 to 50, asset set 2, twin types occlude and swap view, two-skill compositions (see the <a href="#tab-our-benchmark">OUR Benchmark</a> tab).</p>
+  </section>
+  <p class="note">Provenance files: <code>assets/qual/&lt;rival&gt;/provenance_rows.json</code>, <code>provenance_figs.json</code>; reports: <code>ROWS_REPORT.md</code>, <code>FIGS_REPORT.md</code> in the same folder. Images are reproduced for research comparison; each dataset keeps its own licence.</p></section>
+<section class="panel" id="tab-rivals" role="tabpanel"><h2>🥊 Six rivals (all non-RL-native) and what they are made of; the wall each hits is in the grid</h2><table>
+<thead>
+<tr>
+<th>🏷️ rival</th>
+<th>🎥 pictures</th>
+<th>🧾 labels and questions</th>
+<th>📦 size, paper</th>
+<th>🎮 RL-ready?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🥊 Warehouse-500K (NVIDIA)</td>
+<td>🟦 Isaac Sim Replicator RGB-D<br>warehouses, ~95k frames</td>
+<td>✅ exact 3D; templates +<br>Llama-3.1-70B; left/right,<br>region pick, distance, count</td>
+<td>~500k QA, <a href="https://arxiv.org/abs/2508.13564">2508.13564</a>, <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse">card</a></td>
+<td>✅ checkable, ❌ pairs, ❌<br>traces, ❌ RL split</td>
+</tr>
+<tr>
+<td>🥊 SAT-175K</td>
+<td>🟦 ProcTHOR, 22k apartments,<br>eye level</td>
+<td>✅ exact 3D; 2-way MCQ; static<br>relation, depth, count;<br>dynamic ego and object motion,<br>perspective</td>
+<td>175k QA, <a href="https://arxiv.org/abs/2412.07755">2412.07755</a>, <a href="https://huggingface.co/datasets/array/SAT">array/SAT</a></td>
+<td>✅ checkable, 🟡<br>correct-vs-distractor only</td>
+</tr>
+<tr>
+<td>🥊 VSI-590K (Cambrian-S)</td>
+<td>🟪 5 real scan sets + ProcTHOR<br>walks + Hypersim + web tours</td>
+<td>🟡 3D scans where they exist,<br>pseudo for web; 12 video<br>types: count, distances,<br>sizes, directions, order</td>
+<td>590k QA, <a href="https://arxiv.org/abs/2511.04670">2511.04670</a>, <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K">card</a></td>
+<td>✅ checkable, ❌ pairs, ❌<br>traces, ❌ RL split</td>
+</tr>
+<tr>
+<td>🥊 OSD-8.7M (SpatialRGPT)</td>
+<td>🟩 OpenImages, 1M photos, 5M<br>regions</td>
+<td>🟡 guessed depth (Metric3Dv2),<br>boxes, intrinsics; 8M<br>templates + 700k LLM QA</td>
+<td>8.7M QA, <a href="https://arxiv.org/abs/2406.01584">2406.01584</a>, <a href="https://huggingface.co/datasets/a8cheng/OpenSpatialDataset">card</a></td>
+<td>🟡 template part checkable, LLM<br>part not</td>
+</tr>
+<tr>
+<td>🥊 SpatialQA-50K (SpatialBot)</td>
+<td>🟩 COCO, Visual Genome, robot<br>frames</td>
+<td>🟡 sensor or ZoeDepth depth;<br>depth values, proximity,<br>relations, counts</td>
+<td>~50k images, <a href="https://arxiv.org/abs/2406.13642">2406.13642</a></td>
+<td>🟡 checkable from estimated<br>depth</td>
+</tr>
+<tr>
+<td>🥊 RoboSpatial-1M</td>
+<td>🟩 ScanNet, Matterport3D,<br>3RScan, HOPE, GraspNet scans</td>
+<td>✅ exact 3D boxes; yes/no<br>configuration, empty-space<br>points, fit; ego, world,<br>object frames</td>
+<td>~1M images, 3M QA, <a href="https://arxiv.org/abs/2411.16537">2411.16537</a></td>
+<td>✅ checkable, ❌ pairs, ❌<br>traces, ❌ RL split</td>
+</tr>
+</tbody></table>
+<p>Legend: 🎥 🟦 simulator / 🟪 sim + real / 🟩 real . 🧾 ✅ exact labels / 🟡 estimated or model-written . 🎮 what ships for grading tries. Excluded as RL-native or out of story, cited as untrained references: Cosmos-Reason1 (30,304 grading prompts, GRPO) [S15], SpaceR-151k [S16], SVQA-R1 [S17], MultiSPA-27M (94.7% on BLINK multi-view) [S20].</p>
+</section>
+<section class="panel" id="tab-rl-novelty" role="tabpanel"><h2>💡 What OURS adds for RL (the novelty, per algorithm)</h2><table>
+<thead>
+<tr>
+<th>🏷️ algorithm needs</th>
+<th>🧪 what rivals give</th>
+<th>💡 what OURS ships from exact simulator state</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🎯 GRPO / PPO: a checker per prompt</td>
+<td>exact match on MCQ or a number</td>
+<td>graded credit: distance and size within tolerance bands, direction within 1 bin, count off-by-n; step checks on a written chain (each claim tested against the 3D state) [S10][S14]</td>
+</tr>
+<tr>
+<td>🎯 GRPO / PPO: hard prompts</td>
+<td>fixed difficulty</td>
+<td>difficulty knobs logged per sample (occlusion %, object count, camera tilt, distance ratio) for curricula and pass-rate binning</td>
+</tr>
+<tr>
+<td>🔀 DPO: chosen vs rejected</td>
+<td>none, or a random distractor</td>
+<td>typed hard negatives: the rejected answer is the exact failure a model makes (mirror flip, wrong reference frame, off-by-one, occluded object counted), built from the twin scene, not edited by an LLM [S6][S18]</td>
+</tr>
+<tr>
+<td>⚖️ KTO: good or bad labels, unpaired</td>
+<td>none</td>
+<td>every model try labelled by the checker, plus the twin rule: an answer that does not flip when the scene flips is bad [S17]</td>
+</tr>
+<tr>
+<td>🔁 twin consistency reward</td>
+<td>SVQA-R1 flips the picture in 2D [S17]</td>
+<td>the object or camera moves in 3D, occlusion and depth change with it, so the reward cannot be gamed by symmetry</td>
+</tr>
+<tr>
+<td>⏱️ VANTAGE-style timing and tracking rewards</td>
+<td>nothing checkable</td>
+<td>event start/end from the event log, track IoU from per-frame poses: the two tasks where every model is weakest [S3]</td>
+</tr>
+<tr>
+<td>♾️ endless prompts</td>
+<td>fixed files</td>
+<td>a generator plus checkers, so RL never runs out of fresh prompts [Reasoning Gym style, <a href="https://arxiv.org/abs/2505.24760">2505.24760</a>]</td>
+</tr>
+</tbody></table>
+<p>Legend: 🎯 policy-gradient methods / 🔀 pairwise / ⚖️ unpaired / 🔁 consistency / ⏱️ temporal / ♾️ procedural. Not novel on its own: grading tries [S13], view-consistency [S17], hard-negative DPO [S18]; the novelty is that all of these come for free and exact from one simulator state, for camera views no rival covers.</p>
+</section>
+<section class="panel" id="tab-our-benchmark" role="tabpanel"><h2>🧪 OUR benchmark, SpatialGym-Bench: the five real tests, what each asks and claims, against ours</h2><!-- md-tables: prose max_cols=6 -->
+<table>
+<thead>
+<tr>
+<th>🏷️ benchmark</th>
+<th>❓ asks, today&#39;s best, and 🏆 the claimed subset</th>
+<th>📏 how it scores</th>
+<th>🎮 RL environment</th>
+<th>🔁 twins, held-out design</th>
+<th>💡 what OURS adds against it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>📋 VANTAGE-Bench <a href="https://arxiv.org/abs/2609.09396">2609.09396</a></td>
+<td>real fixed-camera video, 8 tasks (events, VQA, pointing, boxes, timing, captions, tracking); timing and tracking weakest, best under 56 mIoU. 🏆 claimed: 6 grounded tasks; captions and VQA reported</td>
+<td>accuracy, macro F1, temporal mIoU, tracking AUC on a fixed set</td>
+<td>❌ none</td>
+<td>❌ no twins, fixed items</td>
+<td>event start and end from the event log, tracks from per-frame poses, graded per item; endless fixed-camera prompts</td>
+</tr>
+<tr>
+<td>📋 ViewSpatial-Bench <a href="https://arxiv.org/abs/2505.21500">2505.21500</a></td>
+<td>real photos with people; direction from the camera or a person&#39;s eyes, 18 bins, 5 tasks; 43k targeted items moved a 3B model +46. 🏆 claimed: human-perspective tasks</td>
+<td>multiple-choice accuracy over 18 direction bins</td>
+<td>❌ none</td>
+<td>❌ none</td>
+<td>people with exact body orientation; direction graded within 1 bin instead of right or wrong</td>
+</tr>
+<tr>
+<td>📋 MMSI-Bench <a href="https://arxiv.org/abs/2505.23764">2505.23764</a></td>
+<td>1,000 real multi-image MCQ, 11 types; best open about 31%, GPT-5 about 42%, humans 97%. 🏆 claimed: camera-camera, region, motion, multi-step</td>
+<td>exact-match accuracy</td>
+<td>❌ none</td>
+<td>❌ none</td>
+<td>posed multi-view sets; camera-camera and region-region relations computed from exact poses</td>
+</tr>
+<tr>
+<td>📋 3DSRBench <a href="https://arxiv.org/abs/2412.07825">2412.07825</a></td>
+<td>real photos; height, location, orientation, multi-object; common vs uncommon views; flip test; best 60.3%. 🏆 claimed: orientation, multi-object, uncommon views</td>
+<td>MCQ accuracy; CircularEval needs every pass right; FlipEval on mirrored images</td>
+<td>❌ none</td>
+<td>🟡 2D mirror flip only</td>
+<td>3D twins: the object or the camera moves, occlusion and depth change with it, so symmetry cannot game the score</td>
+</tr>
+<tr>
+<td>📋 OmniSpatial <a href="https://arxiv.org/abs/2506.03135">2506.03135</a></td>
+<td>8.4k real QA: perspective, dynamic, interaction, logic; models peak 57%. 🏆 claimed: perspective and dynamic groups</td>
+<td>MCQ accuracy; GPT-4.1-mini grades free-form chains</td>
+<td>❌ none</td>
+<td>❌ none</td>
+<td>perspective from any agent in the scene; motion twins with exact outcomes</td>
+</tr>
+<tr>
+<td>🏁 OURS, SpatialGym-Bench (held-out twin test)</td>
+<td>Isaac Sim fixed cameras 8 to 20 ft; test = held-out levels 14 to 20 ft, scenes 41 to 50, asset set 2, about 5k items plus a generator</td>
+<td>🏁 held-out accuracy . 🔁 twin rate (both of a pair right AND the answer flips) . 📏 graded credit (tolerance bands, direction bins, count off-by-n) . 🎚️ pass rate per difficulty knob</td>
+<td>✅ the test IS an environment: frozen-seed prompt generator plus checker reward; fresh items on every call; RL-trained models are scored on prompts they never saw</td>
+<td>✅ 3D twins by construction; levels, scenes, twin types and compositions frozen before any training data exists</td>
+<td>Spearman of all arms against the five real tests; at least 1,000 items per claimed subset, bootstrap CIs, train-test proximity report; lmms-eval task and leaderboard</td>
+</tr>
+</tbody></table>
+<p>Legend: ❌ absent / 🟡 partial / ✅ built in / 🏆 claimed subset, pre-registered before scoring. Dev set for tuning, never these five: SAT synthetic val, a VSI-590K hold-out, SpatialRGPT-Bench, EmbSpatial-Bench. Rival facts from the scoring audit in rl_env_subjective_rewards.md (lab notes, private); design borrowed from GemBench compositions, COLOSSEUM levels, LIBERO-X difficulty, the benchmark audit and RoboLab&#39;s Spearman validation [S27] to [S31]. Home-game and sim-only limits: see the Limitations table; build order: plan steps 2, 4 and 5.</p>
+</section>
+<section class="panel" id="tab-grid-skills-bought" role="tabpanel"><h2>🔁 Which skills exact state buys: how each rival could beat OURS on each test, and why it cannot</h2><p>Read each cell as &quot;their best shot, then the wall they hit&quot;. A cell marked 🟡 is a real contest; the claim there is on the named subset only.</p>
+<table>
+<thead>
+<tr>
+<th>🏷️ rival</th>
+<th>📋 VANTAGE (8 tasks)</th>
+<th>📋 ViewSpatial (5 tasks)</th>
+<th>📋 MMSI (11 types)</th>
+<th>📋 3DSRBench (12 types)</th>
+<th>📋 OmniSpatial (4 groups)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🥊 Warehouse-500K</td>
+<td>🟡 shot: elevated stills with<br>masks help pointing and boxes;<br>wall: no video, so 5 of 8<br>tasks (timing, tracking,<br>captions, events, video QA)<br>have zero coverage</td>
+<td>✅ wall: no perspective<br>questions, no people</td>
+<td>✅ wall: single image, no<br>cross-view relations</td>
+<td>✅ wall: 4 question kinds, no<br>orientation, no multi-object</td>
+<td>✅ wall: no perspective, no<br>motion</td>
+</tr>
+<tr>
+<td>🥊 SAT-175K</td>
+<td>✅ wall: eye-level homes, no<br>fixed cameras, no video, 2-way<br>MCQ</td>
+<td>🟡 shot: 6k allocentric items;<br>wall: no people, so the 3<br>human-perspective tasks are<br>uncovered, and 6k vs the 43k<br>that moved this test 46 points<br>[S21]</td>
+<td>🟡 shot: 14k two-image dynamic<br>items (ego and object motion);<br>wall: no camera-camera or<br>region-region relations across<br>3+ views</td>
+<td>🟡 shot: relations, depth,<br>count on ProcTHOR; wall: only<br>&quot;common&quot; viewpoints, no<br>orientation types; FlipEval<br>punishes its left/right habit</td>
+<td>🟡 shot: dynamic and<br>perspective items exist; wall:<br>lower fidelity, 2-way MCQ, no<br>hypothetical-perspective or<br>interaction items</td>
+</tr>
+<tr>
+<td>🥊 VSI-590K</td>
+<td>🟡 shot: real video,<br>appearance-order items; wall:<br>eye-level walks, no fixed<br>cameras, no timing or tracking<br>outputs</td>
+<td>🟡 shot: &quot;standing at A facing<br>B, where is C&quot; items; wall: no<br>people, so human-perspective<br>tasks are uncovered</td>
+<td>🟡 shot: real ScanNet frames<br>match MMSI sources; wall: its<br>12 types are counts,<br>distances, sizes, order, not<br>camera-camera or region-region<br>relations</td>
+<td>✅ wall: video question types,<br>no single-image orientation or<br>height</td>
+<td>🟡 shot: relative-direction<br>items; wall: no dynamic<br>motion, no interaction, no<br>logic items</td>
+</tr>
+<tr>
+<td>🥊 OSD-8.7M</td>
+<td>🟡 shot: real photos with<br>region prompts help referring<br>and localization on real<br>footage; wall: no video, no<br>timing, wrong camera height</td>
+<td>✅ wall: single view, no<br>perspective questions, no<br>orientation labels</td>
+<td>✅ wall: single image</td>
+<td>🟡 shot: real COCO-like photos,<br>vertical and depth distances<br>cover location and height (4<br>of 12 types); wall:<br>axis-aligned boxes give no<br>orientation (3 types), no<br>multi-object 3D (5 types),<br>guessed depth</td>
+<td>✅ wall: static single-image<br>relations only</td>
+</tr>
+<tr>
+<td>🥊 SpatialQA-50K</td>
+<td>✅ wall: single images,<br>depth-centric</td>
+<td>✅ wall: no perspective</td>
+<td>✅ wall: single image</td>
+<td>🟡 shot: COCO images with depth<br>cover location types; wall:<br>estimated depth (ZoeDepth), no<br>orientation, no multi-object</td>
+<td>✅ wall: no perspective, no<br>motion</td>
+</tr>
+<tr>
+<td>🥊 RoboSpatial-1M</td>
+<td>✅ wall: egocentric indoor and<br>tabletop stills, no video, no<br>fixed cameras</td>
+<td>🟡 shot: object-centric frame<br>questions train direction from<br>an object&#39;s view; wall: no<br>people, so the 3<br>human-perspective tasks are<br>uncovered, and yes/no answers<br>vs 18 direction bins</td>
+<td>✅ wall: single egocentric<br>image</td>
+<td>🟡 shot: 3D boxes and object<br>frames cover orientation and<br>location; wall: pairwise<br>questions only, no<br>multi-object 3+, common<br>viewpoints only</td>
+<td>🟡 shot: object-centric<br>perspective; wall: no dynamic,<br>no interaction, no logic</td>
+</tr>
+</tbody></table>
+<p>Legend: ✅ structural win (the rival has no data for the skill) / 🟡 contest on part of the test (claim on the named subset only). Sources: [S1][S2][S3][S8][S19][S21][S22][S23][S24].</p>
+<p>Why a missing skill cannot be recovered by the rival&#39;s other data (the margin theory): targeted data moves these tests by 20 to 46 points, and no other data moves them. ViewSpatial: 43k auto items gave +46 [S21]. BLINK multi-view: 27M multi-frame items gave +26.4 to 94.7% [S20]. CV-Bench: 127k static items gave +23.9, while VSI-Bench moved only +3.8 from the same data [S1]. Spatial-DISE: 8.6k items gave +21 [S24]. So a rival with zero items of a skill stays near the base model on that skill, and OURS, generating that skill exactly, wins by roughly the size of those published jumps. Where a rival has partial data (🟡 cells), the margin shrinks to the uncovered subset, which is why every 🟡 cell names it.</p>
+</section>
+<section class="panel" id="tab-score-table" role="tabpanel"><h2>🏁 Score table skeleton (same layout as the sample image)</h2><p>Recipe R1 for every column: copy answers, then grade own tries with exact match (see Plan 01 (lab notes, private)). Subset rows carry the claim; whole-test rows are reported.</p>
+<!-- md-tables: max_cols=9 max_row=450 -->
+<table>
+<thead>
+<tr>
+<th>group</th>
+<th>benchmark, metrics one per line</th>
+<th>🏁 OURS</th>
+<th>🥊 Warehouse-500K</th>
+<th>🥊 SAT-175K</th>
+<th>🥊 VSI-590K</th>
+<th>🥊 OSD-8.7M</th>
+<th>🥊 SpatialQA-50K</th>
+<th>🥊 RoboSpatial-1M</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Claimed, Qwen2.5-VL-3B, R1</td>
+<td>VANTAGE-Bench: 6 grounded tasks, aggregate</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td></td>
+<td>ViewSpatial: human-perspective acc, overall acc</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td></td>
+<td>MMSI: camera-camera, region, motion, multi-step<br>acc; overall</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td></td>
+<td>3DSRBench: orientation, multi-object,<br>uncommon-view acc; overall</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td></td>
+<td>OmniSpatial: perspective, dynamic acc; overall</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Own test, held-out (home game, second contribution)</td>
+<td>SpatialGym-Bench: held-out-level acc, twin rate,<br>graded score</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td></td>
+<td>SpatialGym-Bench RL track: pass rate on fresh<br>prompts, twin rate</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Value of the reward</td>
+<td>Δ R1 minus R0 per column: grading tries minus<br>copying answers, on the claimed subsets</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Transfer checks, no claim</td>
+<td>CV-Bench: 2D acc, 3D acc</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td></td>
+<td>BLINK spatial: acc</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Controls</td>
+<td>base model, zero-shot</td>
+<td>n/a</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>R0 copy-only</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>References, not trained here</td>
+<td>MultiSPA-27M, SpaceR-151k, Cosmos-Reason1<br>(published numbers where they exist)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Legend: 🏁 OURS / 🥊 rival. Bold the best per row among trained arms once numbers land. Compute (public recipes, not measured): a copy stage over 100k QA is a few hours on one 24 GB GPU; the grading stage roughly doubles it; the eight tests take one to three hours per checkpoint; seven checkpoints in total. Spearman of the SpatialGym-Bench column ranks against the five real tests is reported under the table; the Δ row is the number that shows what the reward buys, and it is reported for every column so the recipe stays fair.</p>
+</section>
+<section class="panel" id="tab-pipeline" role="tabpanel"><h2>🏭 Data generation pipeline</h2><pre><code> ASSETS                          SCENE + CAMERA                       RENDER (Isaac Sim / Replicator)
+ +-------------------------+     +-----------------------------+     +-------------------------------+
+ | SimReady USD warehouses |     | Replicator Object + Agent:  |     | RGB, depth, seg masks, 3D     |
+ | (notes_01.md, TA tier)  |----&gt;| layout, lighting, workers,  |----&gt;| boxes, camera pose, per-frame |
+ | DigitalCousin objects   |     | forklifts, event scripts    |     | object poses, EVENT LOG       |
+ | other: ProcTHOR,        |     | camera sampler: height 8-20 |     | (fall, near-miss, entry)      |
+ | SceneSmith, Blender     |     | ft, tilt 30-60 deg          |     +---------------+---------------+
+ +-------------------------+     +-----------------------------+                     |
+                                                                                     v
+ TWINS                           VERIFIER BANK (from exact state)      QUESTIONS
+ +-------------------------+     +-----------------------------+     +-------------------------------+
+ | same scene, ONE change: |     | relation (left/right/behind)|     | templates per skill of the 5  |
+ | move object, move       |----&gt;| count, depth order          |----&gt;| tests; twin question pairs;   |
+ | camera, remove object,  |     | distance with tolerance     |     | multi-view sets (MMSI style)  |
+ | occlude, swap view      |     | bands, direction (18 bins)  |     | perspective questions         |
+ +-------------------------+     | event start/end, track IoU  |     +---------------+---------------+
+                                 | step checks for a written   |                     |
+                                 | reasoning chain             |                     v
+                                 +-----------------------------+     OPTIONAL POLISH
+                                                                     +-------------------------------+
+ OUTPUTS (one generator run)                                         | wording: closed API (GPT,     |
+ +-------------------------+                                         | Gemini, Claude) or open LLM;  |
+ | SFT triples             |                                         | answers never touched         |
+ | GRPO prompts + checker  |&lt;----------------------------------------| looks: Cosmos-Transfer for    |
+ | DPO typed pairs         |                                         | photoreal style (open weights)|
+ | KTO good/bad labels     |                                         | real anchor: small real slice |
+ | dev split (sim)         |                                         | for ablation only             |
+ +-------------------------+                                         +-------------------------------+
+ | TEST split (frozen 1st):|
+ | held-out levels, scenes,|   never rendered for train; twin pairs, graded checkers,
+ | twin types, compositions|   difficulty bins, RL env (see &quot;OUR benchmark&quot;)
+ +-------------------------+
+</code></pre>
+<p>Three ways to run it: (1) NVIDIA stack only: Isaac Sim with Replicator on the SimReady assets, Cosmos-Transfer for looks; (2) closed APIs only for wording and, if licences allow, image or video generation (Veo, GPT image) for appearance variety, never for labels; (3) other simulators: ProcTHOR or SceneSmith for indoor variety, Blender for custom rigs. Labels always come from the simulator state, so the checkers stay exact whichever path renders the pixels.</p>
+</section>
+<section class="panel" id="tab-loop" role="tabpanel"><h2>🔄 The improvement loop: from the score table to &quot;OURS beats every rival&quot;, by autoresearch</h2><p>Karpathy&#39;s autoresearch gives an agent one editable file (<code>train.py</code>), a fixed 5-minute budget per experiment, one metric (<code>val_bpb</code>), a keep-or-discard rule, and a human-edited <code>program.md</code>; about 100 experiments run overnight [S26]. Our port keeps those four ideas and moves the editable file from the recipe to the data, because the recipe is frozen and shared with the rivals.</p>
+<pre><code>                +----------------------------------------------------------------------+
+                | program.md (owner edits): goal, levers, dev metric, budget, stop rule,|
+                | the five claimed subsets written down BEFORE any test score          |
+                +-----------------------------------+----------------------------------+
+                                                    |
+  5 x 7 score table under R1                        v                gen_config.yaml (the ONE file the agent edits)
+  rows = 5 tests, cols = OURS + 6 rivals  --gap per cell--&gt;  PROPOSER  --edit--&gt;  skill mix, camera prior, twin ratio,
+  (whole test AND claimed subset)                    |    (agent)                 tolerance bands, difficulty knobs,
+                                                     |                            scene assets, question templates
+                                                     v
+                                    GENERATE a 50k probe (fixed budget, CPU render + checkers)
+                                                     |
+                                                     v
+                                    TRAIN the probe under R1 with FIXED steps (same recipe as the table)
+                                                     |
+                                                     v
+                                    SCORE on DEV only: SAT val, VSI-590K hold-out, SpatialRGPT-Bench,
+                                    EmbSpatial-Bench, a sim DEV slice  (never the five tests, never OUR TEST)
+                                                     |
+                                   +-----------------+------------------+
+                                   | better on the gap cells, paired CI |-- no --&gt; discard, run the diagnose loop
+                                   | excluding zero?                    |         (research-direction), log.jsonl,
+                                   +-----------------+------------------+         next proposal
+                                                     | yes: keep; incumbent := probe
+                                                     v
+                   SELF-TARGETING [RSI]: the incumbent&#39;s FAILED dev items -&gt; their factor values
+                   (camera tilt, distance band, count, view pair, person orientation) -&gt; the generator
+                   oversamples exactly those factors in the next probe; the checkers grade the new items
+                                                     |
+                                                     v
+                   every K keeps: one full run, then the five TESTS and OUR TEST scored ONCE per release
+                   STOP when OURS beats every rival on the five claimed subsets with CI,
+                   or when two nights keep nothing: then the loop is dead weight, and the plan says so
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>🏷️ autoresearch</th>
+<th>🔁 our port</th>
+<th>why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🧾 <code>train.py</code>, the one file the agent edits</td>
+<td><code>gen_config.yaml</code>: skill mix, camera prior, twin ratio, tolerance bands, difficulty knobs, assets, templates</td>
+<td>levers live in the data; the recipe never moves for OURS alone</td>
+</tr>
+<tr>
+<td>⏱️ 5 minutes per experiment</td>
+<td>one 50k probe plus a fixed-step R1 run</td>
+<td>steps, not minutes, so a preempted probe still compares</td>
+</tr>
+<tr>
+<td>📏 <code>val_bpb</code></td>
+<td>dev accuracy on the gap cells, paired bootstrap CI over dev items</td>
+<td>one number per probe; the test set is scored once per release</td>
+</tr>
+<tr>
+<td>✅ keep or discard</td>
+<td>keep only if the CI excludes zero on the gap cells; otherwise diagnose before the next edit</td>
+<td>the diagnose step is what autoresearch lacks</td>
+</tr>
+<tr>
+<td>📝 <code>program.md</code> edited by the human</td>
+<td><code>program.md</code> with the pre-registered subset claims and the stop rule</td>
+<td>the owner tunes the org code, not the yaml</td>
+</tr>
+<tr>
+<td>🌙 about 100 runs overnight</td>
+<td>as many probes as one GPU allows; a proposer model reads <code>log.md</code> between probes</td>
+<td>no human at 3 a.m.</td>
+</tr>
+</tbody></table>
+<p>Legend: 🧾 editable file / ⏱️ budget / 📏 metric / ✅ verdict / 📝 human role / 🌙 cadence. What makes it recursive: the trained checkpoint chooses what the generator renders next, through its own dev failures, and the checkers built from the simulator state grade those new items without a human. The loop can end with &quot;OURS cannot beat rival X on subset Y&quot;; that result is written into the limitations, not hidden.</p>
+</section>
+<section class="panel" id="tab-recipe" role="tabpanel"><h2>🧾 Recipe</h2><p>Base model Qwen2.5-VL-3B-Instruct (<a href="https://arxiv.org/abs/2502.13923">2502.13923</a>), LoRA rank 64, alpha 128, learning rate 1e-4, fixed step budget, one prompt template for all datasets, scored through lmms-eval (<a href="https://arxiv.org/abs/2407.12772">2407.12772</a>). Recipe R1 (Plan 01 (lab notes, private)): copy answers, then grade the model&#39;s own tries with answer match plus format reward [GRPO, <a href="https://arxiv.org/abs/2402.03300">2402.03300</a>]. Published spatial work uses this setting and reaches about 42% on VSI-Bench after copying, which leaves headroom.</p>
+</section>
+<section class="panel" id="tab-plan" role="tabpanel"><h2>🗺️ Six-step plan, cheapest first</h2><ol>
+<li>Measure the gap before generating: run recipe R1 on the six rivals and score them; owner file: the score table above (about four GPU-days with the grading stage).</li>
+<li>Write the skill list as a spec and freeze the test split (held-out levels, scenes, twin types, compositions) before any training data exists; owner files <code>d01/literature/area_a_skill_spec.md</code> and <code>papers/p01-spatial-vqa/eval/test_spec.md</code> (to be created, no GPU).</li>
+<li>Build the camera prior from VANTAGE-Bench and Warehouse-500K metadata; script <code>d01/generate/camera_prior.py</code> (to be created, CPU).</li>
+<li>Generate the frozen SpatialGym-Bench split (about 5k items, twins included) and then a 50k SpatialGym train pilot with twins, posed multi-view sets and checkers from the warehouse and smart-space USD assets listed in notes_01.md (lab notes, private) (TA tier); train R1 once, score on the dev set only; start the loop above with <code>program.md</code> and <code>gen_config.yaml</code> (to be created).</li>
+<li>Package SpatialGym-Bench as an environment: <code>reset(seed)</code> returns a fresh image set and question, <code>step(answer)</code> returns graded credit from the checker plus the twin verdict, frozen seeds for the leaderboard; run one RL-trained arm through it; owner file <code>papers/p01-spatial-vqa/eval/spatialgym_env.py</code> (to be created).</li>
+<li>Add the map-then-answer variant, DPO typed pairs and timing checkers as ablations; ship the lmms-eval task and leaderboard; score the five tests and SpatialGym-Bench once per release, never inside the loop.</li>
+</ol>
+</section>
+<section class="panel" id="tab-limitations" role="tabpanel"><h2>⛔ Limitations: tests we do not claim, and why</h2><table>
+<thead>
+<tr>
+<th>🏷️ test</th>
+<th>🥇 who holds it</th>
+<th>⛔ reason</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>📋 CV-Bench, BLINK spatial</td>
+<td>SAT, OSD</td>
+<td>every skill they ask is already trained by SAT (+23.9 on CV-Bench) and OSD (real photos); tie at best; BLINK subsets are 120 to 143 items, too small for a margin; reported as transfer checks</td>
+</tr>
+<tr>
+<td>📋 VSI-Bench</td>
+<td>VSI-590K</td>
+<td>real scans of the same room families, walked on video; reported gain over 30 points [S2]</td>
+</tr>
+<tr>
+<td>📋 PhysBench</td>
+<td>Cosmos-Reason1</td>
+<td>half the test needs mass, density, friction knowledge a renderer cannot give [S12]</td>
+</tr>
+<tr>
+<td>📋 PAI-Bench-U, Spatial-DISE, SAT-Real, AI City Track 3, SpatialRGPT-Bench</td>
+<td>Cosmos, Spatial-DISE-12K, SAT, Warehouse, OSD</td>
+<td>each is a rival&#39;s own domain or test set; dev signals only [S24][S25]</td>
+</tr>
+<tr>
+<td>📋 MMSI driving and hand-object images; VANTAGE captions and VQA</td>
+<td>VSI-590K&#39;s web robot video; any real-video rival</td>
+<td>looks we do not render; language-scored captions; whole-test numbers reported, not claimed</td>
+</tr>
+<tr>
+<td>🧪 MultiSPA-27M as a rival</td>
+<td>prior art [S20]</td>
+<td>would win MMSI-style tests; cited as a reference row, not trained</td>
+</tr>
+<tr>
+<td>🧪 SpatialGym-Bench, OUR twin test</td>
+<td>OURS, home game</td>
+<td>sim-only and built by the same generator; held-out levels only; never the headline; trust rests on the Spearman check against the five real tests, no real-photo anchor slice in v0 (decided 2026-09-24); RL track ships in v0</td>
+</tr>
+</tbody></table>
+<p>General limits to state: sim-to-real drops of 20 to 50 points are documented for contact, sensor noise and unscripted human behaviour; closed-API rewording adds licence terms; twins reduce but do not remove language-habit shortcuts; subset claims must be written down before any test score is run.</p>
+</section>
+<section class="panel" id="tab-fixes" role="tabpanel"><h2>🔧 Failure causes and fixes (data side only; the recipe stays shared)</h2><table>
+<thead>
+<tr>
+<th>#</th>
+<th>failure cause</th>
+<th>why it bites us</th>
+<th>fix</th>
+<th>in our plan</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1️⃣</td>
+<td>🟥 skill gaps [S1][S2]</td>
+<td>each rival covers 1 or 2 tests; an absent skill<br>barely transfers</td>
+<td>generate the union of the 5 skill lists<br>from one scene set</td>
+<td>✅ core, see the grid</td>
+</tr>
+<tr>
+<td>2️⃣</td>
+<td>🟥 wrong camera [S3]</td>
+<td>rivals are eye level; VANTAGE is 8 to 20 ft,<br>30 to 60 deg</td>
+<td>sample cameras from the VANTAGE prior<br>[S3][S4]</td>
+<td>✅ core, see the grid</td>
+</tr>
+<tr>
+<td>3️⃣</td>
+<td>🟨 word shortcuts [S5][S6]</td>
+<td>left/right answered from language habits</td>
+<td>twin renders: one change, flipped answer<br>[S6][S7]</td>
+<td>✅ core, see RL novelty</td>
+</tr>
+<tr>
+<td>4️⃣</td>
+<td>🟨 estimated labels [S8][S9]</td>
+<td>OSD distances come from a depth guesser</td>
+<td>exact metric answers with tolerance bands</td>
+<td>✅ core, see RL novelty</td>
+</tr>
+<tr>
+<td>5️⃣</td>
+<td>🟨 answer-only training: no rival<br>teaches the map in<br>between [S10][S11]</td>
+<td>VSI-Bench: word-by-word thinking<br>hurts, an explicit map<br>helps ~10% [S10]; Map2Thought +5.3<br>at 10% data [S11]</td>
+<td>emit a small metric map, then the<br>answer; the map is<br>free from the simulator</td>
+<td>🟡 ablation</td>
+</tr>
+<tr>
+<td>6️⃣</td>
+<td>🟩 physics without outcomes: Cosmos<br>answers are<br>model-written, not measured [S12]</td>
+<td>PhysBench dynamics asks what happens<br>next</td>
+<td>physics-engine clips with measured<br>outcomes (falls,<br>collisions, stacks)</td>
+<td>🟡 dynamics only</td>
+</tr>
+<tr>
+<td>7️⃣</td>
+<td>⬜ recipe lever: graded tries on<br>checkable answers<br>generalize better than copying<br>answers [S13][S14]</td>
+<td>applies to every column equally</td>
+<td>optional stage 2 for ALL arms; OURS<br>gains only through<br>denser checkable targets</td>
+<td>⏸️ later, all arms</td>
+</tr>
+</tbody></table>
+<p>Legend: 🟥 high / 🟨 medium / 🟩 low expected effect . ✅ core / 🟡 ablation / ⏸️ parked</p>
+<p>Rejected before recommending: any change that touches only OURS&#39;s recipe (row 7 is applied to every arm or not at all); any tuning on the five test benchmarks (use SAT synthetic val, a VSI-590K holdout and SpatialRGPT-Bench as the dev set); adding a rival&#39;s labels to OURS (its photos may be inputs, its answers never targets).</p>
+</section>
+<section class="panel" id="tab-sources" role="tabpanel"><h2>📚 Sources</h2><ul>
+<li>[S1] SAT: Dynamic Spatial Aptitude Training, arXiv <a href="https://arxiv.org/abs/2412.07755">2412.07755</a>: ProcTHOR generation, 175k QA, gains on CV-Bench (+23.9), BLINK (+7.4), VSI-Bench (+3.8).</li>
+<li>[S2] Cambrian-S / VSI-590K, arXiv <a href="https://arxiv.org/abs/2511.04670">2511.04670</a> and the <a href="https://huggingface.co/datasets/nyu-visionx/VSI-590K">dataset card</a>: 10 sources, ProcTHOR and Hypersim among them, &gt;30 point gain on VSI-Bench.</li>
+<li>[S3] VANTAGE-Bench, arXiv <a href="https://arxiv.org/abs/2609.09396">2609.09396</a>: camera geometry, 8 tasks, 80% real, temporal tasks weakest.</li>
+<li>[S4] Domain randomization, Tobin et al. 2017, arXiv <a href="https://arxiv.org/abs/1703.06907">1703.06907</a>.</li>
+<li>[S5] What&#39;s &quot;up&quot; with vision-language models, arXiv <a href="https://arxiv.org/abs/2310.19785">2310.19785</a>: language habits drive left/right errors.</li>
+<li>[S6] Counterfactually-augmented data, Kaushik et al. 2019, arXiv <a href="https://arxiv.org/abs/1909.12434">1909.12434</a>: minimal pairs teach the difference that matters.</li>
+<li>[S7] Counterfactual sets for compositional reasoning, arXiv <a href="https://arxiv.org/abs/2507.04699">2507.04699</a>; synthetic minimal-pair video benchmark, arXiv <a href="https://arxiv.org/abs/2601.15780">2601.15780</a>.</li>
+<li>[S8] SpatialRGPT / Open Spatial Dataset, arXiv <a href="https://arxiv.org/abs/2406.01584">2406.01584</a>: Metric3Dv2 depth, WildCamera intrinsics, axis-aligned box limitation.</li>
+<li>[S9] SmolRGPT, arXiv <a href="https://arxiv.org/abs/2509.15490">2509.15490</a>: OSD + Warehouse-500K training, 90.68 on Track 3, weak width and height.</li>
+<li>[S10] Thinking in Space / VSI-Bench, arXiv <a href="https://arxiv.org/abs/2412.14171">2412.14171</a>: 71% spatial errors, CoT hurts, cognitive maps help.</li>
+<li>[S11] Map2Thought, arXiv <a href="https://arxiv.org/abs/2601.11442">2601.11442</a>: metric cognitive maps, +5.3 / +4.8 / +4.0 at 10 / 25 / 50% data on VSI-Bench.</li>
+<li>[S12] Cosmos-Reason1, arXiv <a href="https://arxiv.org/abs/2503.15558">2503.15558</a>: SFT data composition and DeepSeek-R1 traces; PhysBench, arXiv <a href="https://arxiv.org/abs/2501.16411">2501.16411</a>: failure analysis.</li>
+<li>[S13] SFT Memorizes, RL Generalizes, arXiv <a href="https://arxiv.org/abs/2501.17161">2501.17161</a>.</li>
+<li>[S14] Smooth verifiable reward for spatial numbers, arXiv <a href="https://arxiv.org/abs/2601.07695">2601.07695</a>; reward design for physical reasoning, arXiv <a href="https://arxiv.org/abs/2604.13993">2604.13993</a>.</li>
+<li>Also read: CV-Bench in Cambrian-1, arXiv <a href="https://arxiv.org/abs/2406.16860">2406.16860</a>; BLINK, arXiv <a href="https://arxiv.org/abs/2404.12390">2404.12390</a>; 9th AI City Challenge, arXiv <a href="https://arxiv.org/abs/2508.13564">2508.13564</a>; Warehouse-500K <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Spatial-Intelligence-Warehouse">card</a>.</li>
+<li>[S15] Cosmos-Reason1 RL stage (Table 5): 30,304 prompts, exact-match and format rewards, GRPO, no preference pairs, arXiv <a href="https://arxiv.org/abs/2503.15558">2503.15558</a>.</li>
+<li>[S16] SpaceR: Reinforcing MLLMs in Video Spatial Reasoning, arXiv <a href="https://arxiv.org/abs/2504.01805">2504.01805</a>: SpaceR-151k, spatially guided GRPO.</li>
+<li>[S17] SVQA-R1, arXiv <a href="https://arxiv.org/abs/2506.01371">2506.01371</a>: view-consistent reward from mirror-flipped images.</li>
+<li>[S18] Hard-negative preference data for VLMs: VaPR, arXiv <a href="https://arxiv.org/abs/2510.01700">2510.01700</a>; MIA-DPO, arXiv <a href="https://arxiv.org/abs/2410.17637">2410.17637</a>. DPO <a href="https://arxiv.org/abs/2305.18290">2305.18290</a>, KTO <a href="https://arxiv.org/abs/2402.01306">2402.01306</a>, PPO <a href="https://arxiv.org/abs/1707.06347">1707.06347</a>, Visual-RFT <a href="https://arxiv.org/abs/2503.01785">2503.01785</a>.</li>
+<li>MMSI-Bench, arXiv <a href="https://arxiv.org/abs/2505.23764">2505.23764</a>; ViewSpatial-Bench, arXiv <a href="https://arxiv.org/abs/2505.21500">2505.21500</a>.</li>
+<li>[S19] SpatialBot / SpatialQA, arXiv <a href="https://arxiv.org/abs/2406.13642">2406.13642</a>: ~50k images, sensor or ZoeDepth depth, single image, copying only.</li>
+<li>[S20] Multi-SpatialMLLM / MultiSPA, arXiv <a href="https://arxiv.org/abs/2505.17015">2505.17015</a>: 27M multi-frame QA from real scans, +26.4 to 94.7% on BLINK multi-view.</li>
+<li>[S21] ViewSpatial-Bench and the Multi-View Spatial Model, arXiv <a href="https://arxiv.org/abs/2505.21500">2505.21500</a>: 43k auto items, +46.24 on the 3B backbone.</li>
+<li>[S22] 3DSRBench, arXiv <a href="https://arxiv.org/abs/2412.07825">2412.07825</a>: common vs uncommon viewpoint split, FlipEval, best 60.3%.</li>
+<li>[S23] RoboSpatial, arXiv <a href="https://arxiv.org/abs/2411.16537">2411.16537</a>: 1M images, 3M QA, ego, world and object frames, copying only.</li>
+<li>[S24] Spatial-DISE, arXiv <a href="https://arxiv.org/abs/2510.13394">2510.13394</a>: Blender synthetic plus psychometric items; 8.6k training items lift Qwen2.5-VL-7B from 26.1 to 47.0.</li>
+<li>[S25] PAI-Bench, arXiv <a href="https://arxiv.org/abs/2512.01989">2512.01989</a>: PAI-Bench-U is real robot and driving video, 1,214 QA.</li>
+<li>OmniSpatial, arXiv <a href="https://arxiv.org/abs/2506.03135">2506.03135</a>: 8.4k QA, four groups, models peak at 57%.</li>
+<li>[S27] GemBench, arXiv <a href="https://arxiv.org/abs/2410.01345">2410.01345</a>: 16 train and 44 held-out task compositions. [S28] THE COLOSSEUM, arXiv <a href="https://arxiv.org/abs/2402.08191">2402.08191</a>: factor levels, 75% drop combined.</li>
+<li>[S29] What Are We Actually Benchmarking in Robot Manipulation?, arXiv <a href="https://arxiv.org/abs/2606.04233">2606.04233</a>: shortcut probes, significance, pose resampling, train-test proximity. [S30] RoboLab, arXiv <a href="https://arxiv.org/abs/2604.09860">2604.09860</a>: Spearman 1.0 with RoboArena as the validation template. [S31] LIBERO-X, arXiv <a href="https://arxiv.org/abs/2602.06556">2602.06556</a>: progressive difficulty ladder.</li>
+<li>[S26] karpathy/autoresearch, <a href="https://github.com/karpathy/autoresearch">github.com/karpathy/autoresearch</a>: <code>train.py</code> is the one file the agent edits, 5 minutes per experiment, <code>val_bpb</code> is the metric, <code>program.md</code> is the human&#39;s file.</li>
+</ul>
+</section>
+<footer>Built 2026-09-25 from <a href="../plans/plan_area_a_spatial_physical_vqa.md">../plans/plan_area_a_spatial_physical_vqa.md</a> by <code>shared/docs_builder/build_plan_page.mjs</code> with <code>page_config.json</code>. Rebuild after editing the plan.</footer>
+</div><script>const TREE=[{"id":"ours-novelty","parent":null,"leaf":false},{"id":"ours-dataset","parent":"ours-novelty","leaf":false},{"id":"qualitative","parent":"ours-dataset","leaf":true},{"id":"rivals","parent":"ours-dataset","leaf":true},{"id":"rl-novelty","parent":"ours-dataset","leaf":true},{"id":"our-benchmark","parent":"ours-novelty","leaf":true},{"id":"grid-skills-bought","parent":"ours-novelty","leaf":true},{"id":"score-table","parent":"ours-novelty","leaf":true},{"id":"execution","parent":null,"leaf":false},{"id":"pipeline","parent":"execution","leaf":true},{"id":"loop","parent":"execution","leaf":true},{"id":"recipe","parent":"execution","leaf":true},{"id":"plan","parent":"execution","leaf":true},{"id":"appendix","parent":null,"leaf":false},{"id":"limitations","parent":"appendix","leaf":true},{"id":"fixes","parent":"appendix","leaf":true},{"id":"sources","parent":"appendix","leaf":true}];const LOG_DATES=["2026-09-24","2026-09-24","2026-09-24","2026-09-24","2026-09-24","2026-09-24","2026-09-24","2026-09-24","2026-09-21","2026-09-21","2026-09-21"];
+const byId=Object.fromEntries(TREE.map(n=>[n.id,n]));
+const buttons=[...document.querySelectorAll('nav.tabs button')];
+const bars=[...document.querySelectorAll('nav.tabs[data-parent]')];
+const panels=[...document.querySelectorAll('.panel')];
+const leaves=TREE.filter(n=>n.leaf).map(n=>n.id);
+function chain(id){const out=[];let n=byId[id];while(n){out.unshift(n.id);n=n.parent?byId[n.parent]:null;}return out;}
+function activate(leafId,push){
+  if(!byId[leafId]||!byId[leafId].leaf) leafId=leaves[0];
+  const path=chain(leafId);
+  buttons.forEach(b=>b.setAttribute('aria-selected',path.includes(b.dataset.node)));
+  bars.forEach(b=>b.classList.toggle('active',path.includes(b.dataset.parent)));
+  panels.forEach(p=>p.classList.toggle('active',p.id==='tab-'+leafId));
+  if(push)history.replaceState(null,'','#tab-'+leafId);
+}
+buttons.forEach(b=>b.addEventListener('click',()=>activate(b.dataset.leaf,true)));
+document.addEventListener('keydown',e=>{if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;if(e.target.closest('input,textarea'))return;
+  const cur=(location.hash.startsWith('#tab-')?location.hash.slice(5):leaves[0]);const i=Math.max(0,leaves.indexOf(cur));
+  activate(leaves[(i+(e.key==='ArrowRight'?1:leaves.length-1))%leaves.length],true);});
+document.querySelectorAll('.panel table').forEach(t=>{const w=document.createElement('div');w.className='tablewrap';t.parentNode.insertBefore(w,t);w.appendChild(t);});
+document.querySelectorAll('.panel a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener';});
+document.querySelectorAll('a[href^="#tab-"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();activate(a.getAttribute('href').slice(5),true);window.scrollTo(0,0);}));
+window.addEventListener('hashchange',()=>activate(location.hash.replace('#tab-',''),false));
+activate(location.hash.startsWith('#tab-')?location.hash.slice(5):leaves[0],false);
+
+// ---- decisions log drawer: the badge always shows the total number of entries (no browser storage)
+(function(){
+  const bell=document.getElementById('bell'); if(!bell) return;
+  const drawer=document.getElementById('drawer'), badge=document.getElementById('badge'), count=document.getElementById('dcount'), items=[...drawer.querySelectorAll('li')];
+  badge.textContent=items.length>99?'99+':String(items.length); badge.hidden=items.length===0; count.textContent=items.length+' entries, newest first';
+  function toggle(open){drawer.hidden=!open;bell.setAttribute('aria-expanded',String(open));}
+  bell.addEventListener('click',e=>{e.stopPropagation();toggle(drawer.hidden);});
+  drawer.addEventListener('click',e=>e.stopPropagation());
+  document.addEventListener('click',()=>toggle(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false);});
+})();
+</script></body></html>

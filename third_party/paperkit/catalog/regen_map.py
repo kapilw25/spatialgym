@@ -1,0 +1,407 @@
+"""Curated map: which nvidia-org datasets can be regenerated with a simulator or a
+data-generation library, and with what. Every entry was checked against the dataset
+card text (README or rendered card for gated repos) on 2026-09-21.
+
+Tiers
+  T1  NVIDIA simulator / renderer (Isaac Sim, Isaac Lab, Isaac Lab-Arena, Omniverse
+      Replicator, NuRec, Cosmos world models, DriveSim, Video-to-Data)
+  T2  Third-party simulator / solver (MuJoCo, RoboCasa, LIBERO, BEHAVIOR, OpenFOAM,
+      KiT-RT, SCREAM, k-Wave, commercial CFD)
+  T3  NVIDIA data-generation library or pipeline (NeMo-Skills, NeMo Data Designer,
+      NeMo Curator, NeMo Gym, ViPE, FoundationStereo, Magpie TTS, SAGE, ...)
+  T4  Third-party generation library (Reasoning Gym, SynthDoG)
+  T5  LLM-synthesized text with the generator model(s) named on the card, but no
+      released generation library
+  TA  Sim-ready assets: inputs you load into a simulator, not generated outputs
+
+Status
+  released   generation pipeline / scripts / configs are public
+  tools      tools are public but the exact generation scripts are not released
+  internal   generated with NVIDIA-internal tooling (only partly regenerable)
+  env        NeMo Gym environment: prompt set is fixed, rollouts + verification regenerate
+  inputs     asset pack
+  generator  only the generator model(s) are named
+"""
+
+T1 = "T1 NVIDIA simulator / renderer"
+T2 = "T2 Third-party simulator / solver"
+T3 = "T3 NVIDIA data-generation library"
+T4 = "T4 Third-party generation library"
+T5 = "T5 LLM-synthesized (generator named)"
+TA = "TA Sim-ready assets (inputs)"
+
+U = dict(
+    isaacsim="https://github.com/isaac-sim/IsaacSim",
+    isaaclab="https://github.com/isaac-sim/IsaacLab",
+    arena="https://github.com/isaac-sim/IsaacLab-Arena",
+    sdg_loco="https://github.com/isaac-sim/IsaacLab/tree/main/scripts/imitation_learning",
+    mindmap="https://nvidia-isaac.github.io/nvblox_mindmap/pages/data_generation.html",
+    replicator="https://docs.omniverse.nvidia.com/extensions/latest/ext_replicator.html",
+    omniverse="https://developer.nvidia.com/omniverse",
+    cosmos_transfer="https://github.com/nvidia-cosmos/cosmos-transfer1",
+    cosmos="https://github.com/nvidia-cosmos",
+    cdd="https://github.com/nv-tlabs/Cosmos-Drive-Dreams",
+    nurec="https://github.com/nv-tlabs/3dgrut",
+    gen3c="https://github.com/nv-tlabs/GEN3C",
+    lyra="https://github.com/nv-tlabs/lyra",
+    vipe="https://github.com/nv-tlabs/vipe",
+    v2d="https://github.com/nvidia-isaac/video_to_data",
+    gr00t="https://github.com/NVIDIA/Isaac-GR00T",
+    xmob="https://github.com/NVlabs/X-MOBILITY",
+    harmonizer="https://github.com/NVIDIA/harmonizer/",
+    grail="https://nvlabs.github.io/GRAIL/tracking.html",
+    scenesynth="https://scene-synthesizer.github.io/",
+    ffs="https://github.com/NVlabs/FoundationStereo",
+    dynpose="https://research.nvidia.com/labs/dir/dynpose-100k",
+    pointworld="https://github.com/NVlabs/PointWorld",
+    libero="https://github.com/Lifelong-Robot-Learning/LIBERO",
+    robocasa="https://robocasa.ai/",
+    behavior="https://behavior.stanford.edu/",
+    mujoco="https://mujoco.org/",
+    kwave="http://www.k-wave.org/",
+    openfoam="https://www.openfoam.com/",
+    kitrt="https://github.com/KiT-RT",
+    physicsnemo="https://github.com/NVIDIA/physicsnemo",
+    scream="https://github.com/E3SM-Project/scream",
+    blender="https://www.blender.org/",
+    skills="https://github.com/NVIDIA/NeMo-Skills",
+    dd="https://github.com/NVIDIA-NeMo/DataDesigner",
+    curator="https://github.com/NVIDIA-NeMo/Curator",
+    curator_ocr="https://github.com/NVIDIA-NeMo/Curator/tree/experimental/experimental/nvpdftex",
+    gym="https://github.com/NVIDIA-NeMo/Gym",
+    rgym="https://github.com/open-thought/reasoning-gym",
+    synthdog="https://github.com/clovaai/donut/tree/master/synthdog",
+    magpie="https://build.nvidia.com/nvidia/magpie-tts-multilingual/modelcard",
+    openhands="https://github.com/OpenHands/OpenHands",
+    when2call="https://github.com/NVIDIA/When2Call",
+    toolorch="https://github.com/NVlabs/ToolOrchestra/",
+    mind="https://research.nvidia.com/labs/adlr/Nemotron-MIND/",
+    prism="https://nvlabs.github.io/prismatic-synthesis/",
+    crossthink="https://research.nvidia.com/labs/adlr/Nemotron-CrossThink/",
+    cultureguard="https://arxiv.org/abs/2508.01710",
+    sage="https://arxiv.org/abs/2602.10116",
+    flux="https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+)
+
+
+def R(tier, tool, url, status, note):
+    return dict(tier=tier, tool=tool, url=U.get(url, url or ""), status=status, note=note)
+
+
+REGEN = {}
+
+# ------------------------------------------------------------------ T1: NVIDIA simulators / renderers
+REGEN.update({
+    "PhysicalAI-Robotics-GR00T-X-Embodiment-Sim": R(T1, "Isaac GR00T N1 simulation data", "gr00t", "tools",
+        "Simulated multi-embodiment trajectories used to post-train GR00T N1; the card does not name the simulator."),
+    "PhysicalAI-Robotics-GR00T-Teleop-Sim": R(T1, "Simulation (simulator not named) + teleoperation", "", "tools",
+        "1,000 GR1 upper-body tabletop trajectories teleoperated inside a simulation."),
+    "PhysicalAI-WorldModel-Synthetic-Autonomous-Driving-Scenarios": R(T1, "Omniverse (NVIDIA internal simulation platform)", "omniverse", "internal",
+        "Multi-camera surround driving clips rendered with NVIDIA's internal Omniverse simulation platform."),
+    "PhysicalAI-WorldModel-Synthetic-Physical-Interaction-Scenes": R(T1, "Isaac Sim (PhysX) + Omniverse Replicator", "replicator", "tools",
+        "USD scenes simulated in Isaac Sim with PhysX and rendered by Omniverse Replicator; masks automatic, captions from a VLM."),
+    "PhysicalAI-WorldModel-Synthetic-Warehouse-Operations-Scenes": R(T1, "Isaac Sim + Isaac Replicator (Object, Agent)", "replicator", "tools",
+        "All footage rendered in Isaac Sim with Isaac Replicator Object and Agent components; no real footage."),
+    "PhysicalAI-WorldModel-Synthetic-Embodied-Robot-Scenes": R(T1, "Isaac Sim + Isaac Lab + Omniverse + MimicGen + SOMA retargeter", "isaaclab", "tools",
+        "USD robot simulation and rendering pipelines around Isaac Sim, Omniverse and Isaac Lab; MimicGen manipulation, SOMA-retargeted motion in SAGE scenes."),
+    "PhysicalAI-WorldModel-Synthetic-Digital-Human-Scenes": R(T1, "NVIDIA SDG pipeline + SceneSmith scenes + Blender CityGenerator", "blender", "internal",
+        "Digital humans rendered procedurally in indoor (SceneSmith) and outdoor (Blender CityGenerator) 3D scenes; no real footage."),
+    "PhysicalAI-SmartSpaces": R(T1, "Omniverse + Cosmos Transfer; labels via Isaac Sim", "cosmos_transfer", "tools",
+        "Synthetic multi-camera video generated with Omniverse and Cosmos Transfer; ground truth automatic with IsaacSim."),
+    "PhysicalAI-Spatial-Intelligence-Warehouse": R(T1, "Omniverse / Isaac Sim", "omniverse", "tools",
+        "Synthetic RGB and depth rendered with Omniverse; object tags and masks automatic with IsaacSim; QA from templates refined by Llama-3.1-70B."),
+    "PhysicalAI-Robotics-Manipulation-SingleArm": R(T1, "Isaac Sim + task-and-motion planning (scene_synthesizer scenes)", "isaacsim", "tools",
+        "Generated in IsaacSim; task and motion planning finds solutions automatically."),
+    "PhysicalAI-Robotics-Manipulation-Kitchen": R(T1, "Isaac Sim + optimization-based motion planning", "isaacsim", "tools",
+        "Generated in IsaacSim with reasoning algorithms and motion planning solving the tasks automatically."),
+    "PhysicalAI-Robotics-Manipulation-Objects": R(T1, "Isaac Sim + optimization-based motion planning", "isaacsim", "tools",
+        "Generated in IsaacSim with reasoning algorithms and motion planning solving the tasks automatically."),
+    "PhysicalAI-Robotics-Manipulation-Augmented": R(T1, "Isaac Lab Mimic + Cosmos Transfer1", "isaaclab", "released",
+        "10 teleop demos expanded to 1,000 Mimic demos in Isaac Sim, then Cosmos Transfer1 visual augmentation; replay script linked."),
+    "PhysicalAI-GR00T-Tuned-Tasks": R(T1, "Isaac Lab + MimicGen", "isaaclab", "tools",
+        "1,000 GR1 tabletop demos generated automatically in Isaac Lab with MimicGen."),
+    "Arena-G1-Loco-Manipulation-Task": R(T1, "Isaac Lab-Arena + MimicGen", "arena", "tools",
+        "Trajectories generated in Isaac Lab (IsaacLab-Arena env); 50 demos auto-generated with MimicGen from 5 human demos."),
+    "Arena-G1-Static-PickNPlace-Task": R(T1, "Isaac Lab-Arena", "arena", "tools",
+        "G1 loco-manipulation trajectories generated in Isaac Lab in the IsaacLab-Arena environment."),
+    "Arena-GR1-Manipulation-Task": R(T1, "Isaac Lab-Arena + MimicGen", "arena", "tools",
+        "50 MimicGen demos generated from 10 human demos in the IsaacLab-Arena GR1 environment."),
+    "Arena-GR1-Manipulation-PlaceItemCloseDoor-Task": R(T1, "Isaac Lab-Arena + MimicGen", "arena", "tools",
+        "100 MimicGen demos generated from 10 human demos (GR1 place item, close door)."),
+    "Arena-GR1-Manipulation-Task-v3": R(T1, "Isaac Lab-Arena (LeRobot v3 export)", "arena", "tools",
+        "LeRobot v3 export of the Arena GR1 manipulation task; the card only lists dataset metadata."),
+    "Arena-DROID-Camera-Sensitivity-Workflow-Sample": R(T1, "Isaac Lab-Arena policy-evaluation workflow", "arena", "released",
+        "Episode results from an Isaac Lab-Arena simulation experiment; rerun the documented camera-sensitivity workflow to regenerate."),
+    "PhysicalAI-Robotics-mindmap-Franka-Cube-Stacking": R(T1, "Isaac Lab Mimic (mindmap data generation)", "mindmap", "released",
+        "1,000 demos generated automatically with Isaac Lab Mimic; mindmap documents the data-generation step."),
+    "PhysicalAI-Robotics-mindmap-Franka-Mug-in-Drawer": R(T1, "Isaac Lab Mimic (mindmap data generation)", "mindmap", "released",
+        "250 demos generated automatically with Isaac Lab Mimic."),
+    "PhysicalAI-Robotics-mindmap-GR1-Drill-in-Box": R(T1, "Isaac Lab Mimic (mindmap data generation)", "mindmap", "released",
+        "200 demos generated automatically with Isaac Lab Mimic."),
+    "PhysicalAI-Robotics-mindmap-GR1-Stick-in-Bin": R(T1, "Isaac Lab Mimic (mindmap data generation)", "mindmap", "released",
+        "200 demos generated automatically with Isaac Lab Mimic."),
+    "g1_locomanip_dataset": R(T1, "Isaac Lab locomanipulation SDG pipeline", "sdg_loco", "released",
+        "Example artifact of Isaac Lab's SDG pipeline: teleop manipulation extended with automatic navigation, 200 Hz sim labels."),
+    "PhysicalAI-Robotics-Locomanipulation-GRAIL": R(T1, "Isaac Lab (SONIC tracking policy)", "grail", "tools",
+        "Human-object videos retargeted to G1 and physically realized in Isaac Lab by a SONIC tracking policy; RoboCasa assets."),
+    "X-Mobility": R(T1, "Isaac Sim (Nav2 teacher policy, random actions)", "xmob", "tools",
+        "Isaac Sim navigation datasets (nav2 100k, random 160k) used to train the X-Mobility world model."),
+    "PhysicalAI-Autonomous-Vehicles-NuRec": R(T1, "NuRec (3DGRUT neural reconstruction)", "nurec", "tools",
+        "Scenes generated by and renderable with NVIDIA NuRec from 6-camera drives; usable from CARLA via the NuRec integration."),
+    "PhysicalAI-Robotics-NuRec": R(T1, "NuRec 3DGUT in USD for Isaac Sim", "nurec", "tools",
+        "3DGUT reconstructions in USD that load in Isaac Sim (e.g. MobilityGen) for photoreal robot data rendering."),
+    "PhysicalAI-Autonomous-Vehicle-Cosmos-Drive-Dreams": R(T1, "Cosmos-Drive-Dreams", "cdd", "released",
+        "Synthetic driving videos produced by the Cosmos-Drive-Dreams pipeline; code and toolkits on GitHub."),
+    "PhysicalAI-Autonomous-Vehicle-Cosmos-Synthetic": R(T1, "Cosmos-Drive-Dreams (alias repo)", "cdd", "released",
+        "Card redirects to PhysicalAI-Autonomous-Vehicle-Cosmos-Drive-Dreams."),
+    "PhysicalAI-SpatialIntelligence-Lyra-SDG": R(T1, "GEN3C world model (Lyra SDG scripts)", "gen3c", "released",
+        "Multi-view 3D and 4D data generated with GEN3C from images and videos plus ViPE depth; dynamic_sdg scripts in the Lyra repo."),
+    "PhysicalAI-Event-Videos": R(T1, "Cosmos 3 Super + Google Veo 3", "cosmos", "tools",
+        "NVIDIA-generated safety-event videos were created with Google Veo 3 and Cosmos 3 Super; annotations also cover third-party sets."),
+    "Harmonizer-Dataset": R(T1, "DriveSim (NVIDIA internal); real fleet footage for the rest", "harmonizer", "internal",
+        "Synthetic subset is CGI generated by the DriveSim engine for rare and adverse conditions; the real subset is not regenerable."),
+    "PhysicalAI-VANTAGE-Bench": R(T1, "DriveSim (NVIDIA internal), synthetic subset only", "", "internal",
+        "Hybrid benchmark: vendor GoPro footage, DriveSim collision and multi-camera scenarios, scraped ITS footage."),
+    "PhysicalAI-VANTAGE-Bench-Subset": R(T1, "DriveSim (NVIDIA internal), synthetic subset only", "", "internal",
+        "Subset of VANTAGE-Bench with the same hybrid sourcing."),
+    "video-to-data-robot-dexterity-task-library-and-dataset": R(T1, "Video-to-Data (V2D) workflow", "v2d", "released",
+        "Human demos retargeted to bimanual Sharpa hands plus robot executions that mimic them; V2D grounding pipeline on GitHub."),
+    "PhysicalAI-Robotics-GraspGen": R(T1, "GraspGen simulated grasp generation", "", "tools",
+        "57M simulated grasps for 8,515 objects across grippers; the card does not name the simulator."),
+})
+
+# ------------------------------------------------------------------ T2: third-party simulators / solvers
+REGEN.update({
+    "PhysicalAI-Robotics-Manipulation-Kitchen-Demos": R(T2, "MuJoCo / RoboCasa (robosuite)", "robocasa", "tools",
+        "Kitchen demos with compressed MJCF MuJoCo models and raw MuJoCo states for replay."),
+    "RoboCasa-Cosmos-Policy": R(T2, "RoboCasa (MuJoCo)", "robocasa", "tools",
+        "Modified RoboCasa simulation benchmark data used to train Cosmos Policy."),
+    "LIBERO-Cosmos-Policy": R(T2, "LIBERO (robosuite / MuJoCo)", "libero", "tools",
+        "Modified LIBERO simulation benchmark data used to train Cosmos Policy."),
+    "LIBERO_LeRobot_v3": R(T2, "LIBERO (robosuite / MuJoCo)", "libero", "tools",
+        "LeRobot v3 conversion of the LIBERO simulation benchmark."),
+    "libero-r-datasets": R(T2, "LIBERO (annotations on sim episodes)", "libero", "tools",
+        "Chain-of-thought text annotations over LIBERO-100 simulation episodes."),
+    "PointWorld-BEHAVIOR": R(T2, "BEHAVIOR / OmniGibson", "behavior", "tools",
+        "3D point-trajectory annotations derived from BEHAVIOR simulation episodes (PointWorld code)."),
+    "HiLiftAeroML": R(T2, "CFD: Cadence Fidelity Charles solver (commercial)", "", "tools",
+        "1,800 scale-resolving CFD samples of a high-lift aircraft."),
+    "PhysicsNeMo-Datacenter-CFD": R(T2, "OpenFOAM (reference configuration included)", "openfoam", "released",
+        "Normalized OpenFOAM simulations of a datacenter hot aisle; the reference OpenFOAM configuration ships with the asset."),
+    "PhysicsNeMo-CFD-Ahmed-Body": R(T2, "CFD (solver not named on card)", "physicsnemo", "tools",
+        "Ahmed-body surface pressure and wall shear stress across geometry and Reynolds variations."),
+    "Linear-Radiation-Transport": R(T2, "KiT-RT solver, curated into PhysicsNeMo Mesh format", "kitrt", "released",
+        "2-D radiation transport solved with KiT-RT over a discrete design grid; PhysicsNeMo nuclear-engineering example."),
+    "STRATA-SCREAM-sdy1": R(T2, "SCREAM (E3SM) storm-resolving climate model", "scream", "tools",
+        "Global storm-resolving atmospheric simulation output from SCREAM (HPC-scale to regenerate)."),
+    "STRATA-SCREAM-sdy2": R(T2, "SCREAM (E3SM) storm-resolving climate model", "scream", "tools",
+        "Global storm-resolving atmospheric simulation output from SCREAM."),
+    "STRATA-SCREAM-sdecadal": R(T2, "SCREAM (E3SM) storm-resolving climate model", "scream", "tools",
+        "Decadal SCREAM simulation output."),
+    "NV-Raw2Insights-US": R(T2, "k-Wave acoustic simulation", "kwave", "tools",
+        "Full-synthetic-aperture ultrasound simulated with k-Wave over tissue phantoms; ground truth from simulation parameters."),
+})
+
+# ------------------------------------------------------------------ TA: sim-ready assets (inputs)
+REGEN.update({
+    "PhysicalAI-SimReady-Warehouse-01": R(TA, "OpenUSD SimReady assets for Isaac Sim 4.x", "isaacsim", "inputs",
+        "753 SimReady warehouse assets to build Isaac Sim scenes."),
+    "simready-dsx": R(TA, "SimReady asset staging", "", "inputs", "Private staging for SimReady Central submissions."),
+    "srp-staging-controlled": R(TA, "SimReady asset packages", "", "inputs", "Flat repo of SimReady asset packages."),
+    "PhysicalAI-DigitalCousin-Assets": R(TA, "Isaac Sim GR1 tabletop task assets", "isaacsim", "inputs",
+        "Meshes, textures and metadata for the simulated GR1 tabletop tasks."),
+    "PhysicalAI-Robotics-Manipulation-Objects-Kitchen-MJCF": R(TA, "MuJoCo MJCF kitchen assets", "mujoco", "inputs",
+        "MJCF fixtures and objects for a simulated kitchen."),
+    "video-to-data-object-assets": R(TA, "Video-to-Data reconstruction workflows (HOI, SAM3D)", "v2d", "inputs",
+        "Textured meshes and simulation-oriented USD packages reconstructed by the V2D pipeline."),
+    "Spark-AnomalyGen-USD": R(TA, "USD scene for synthetic-data rendering", "omniverse", "inputs",
+        "PCBA USD scene with AOI ring-light rig and camera, ready for SDG rendering."),
+    "Cosmos-NeMo-Assets": R(TA, "Cosmos v1 assets for NeMo", "cosmos", "inputs",
+        "Supporting assets for running Cosmos v1 models in the NeMo framework."),
+    "NeMo-Gym-EnterpriseOps-Assets": R(TA, "NeMo Gym resource-server assets", "gym", "inputs",
+        "Build-time tool schema snapshots for the enterpriseops_gym resource server."),
+    "NeMo-Gym-Conversational-Tool-Use-Assets": R(TA, "NeMo Gym resource-server assets", "gym", "inputs",
+        "Prompt and reference assets for NeMo Gym conversational tool-use environments."),
+})
+
+# ------------------------------------------------------------------ T3: NVIDIA data-generation libraries / pipelines
+_skills_full = "Generation pipeline documented in NeMo-Skills; card says results are fully reproducible."
+REGEN.update({
+    "OpenMathInstruct-1": R(T3, "NeMo-Skills", "skills", "released", "Mixtral-8x7B solutions; " + _skills_full),
+    "OpenMathInstruct-2": R(T3, "NeMo-Skills", "skills", "released", "Llama-3.1-405B solutions; " + _skills_full),
+    "OpenMathReasoning": R(T3, "NeMo-Skills", "skills", "released", "DeepSeek-R1 and QwQ solutions; " + _skills_full),
+    "OpenMath-GSM8K-masked": R(T3, "NeMo-Skills", "skills", "released", "Masked GSM8K solutions produced with the open-sourced NeMo-Skills code."),
+    "OpenMath-MATH-masked": R(T3, "NeMo-Skills", "skills", "released", "Masked MATH solutions produced with the open-sourced NeMo-Skills code."),
+    "OpenCodeInstruct": R(T3, "NeMo-Skills", "skills", "tools", "Synthetic coding instructions; repo provides the SFT pipeline, generation described in the paper."),
+    "OpenCodeReasoning": R(T3, "NeMo-Skills", "skills", "tools", "DeepSeek-R1 code-reasoning responses; repo provides the SFT pipeline."),
+    "OpenCodeReasoning-2": R(T3, "NeMo-Skills", "skills", "tools", "Code completion and critique responses; repo provides the SFT pipeline."),
+    "OpenCodeGeneticInstruct": R(T3, "Genetic-Instruct + NeMo-Skills", "skills", "tools", "Evolutionary Genetic-Instruct generation of coding instructions; SFT pipeline in NeMo-Skills."),
+    "Nemotron-Math-v2": R(T3, "NeMo-Skills", "skills", "released", "gpt-oss-120b solutions under six reasoning and tool settings; NeMo-Skills release docs."),
+    "Nemotron-SFT-Math-v3": R(T3, "NeMo-Skills", "skills", "released", "All pipeline components including data generation implemented in NeMo-Skills."),
+    "Nemotron-SFT-Math-v4": R(T3, "NeMo-Skills", "skills", "released", "All data-generation components implemented in NeMo-Skills."),
+    "Nemotron-Math-Proofs-v1": R(T3, "NeMo-Skills", "skills", "released", "Proof-generation pipeline documented in the NeMo-Skills release."),
+    "Nemotron-Math-Proofs-v2": R(T3, "NeMo-Skills", "skills", "released", "Proof-generation pipeline documented in the NeMo-Skills release."),
+    "Nemotron-Math-Proofs-v3-SFT": R(T3, "NeMo-Skills", "skills", "released", "Proof-generation pipeline documented in the NeMo-Skills release."),
+    "Nemotron-Competitive-Programming-v1": R(T3, "NeMo-Skills", "skills", "released", "Card links the complete pipeline used to generate the data and run SFT."),
+    "Nemotron-SFT-Competitive-Programming-v2": R(T3, "NeMo-Skills + NeMo Data Designer", "skills", "released", "Generation and SFT pipeline in NeMo-Skills; SQL subset generated via Data Designer."),
+    "Nemotron-MIND": R(T3, "NeMo-Skills (MIND framework)", "mind", "tools", "Math-informed synthetic dialogues generated from OpenWebMath with NeMo-Skills."),
+    "Nemotron-SFT-Safety-v2": R(T3, "NeMo-Skills translation pipeline + Riva Translate 4B", "skills", "tools", "Synthetic safety responses translated into six languages with a NeMo-Skills chunked translation pipeline."),
+    "Nemotron-Personas-USA": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic personas from a probabilistic graphical model plus open LLMs via Data Designer."),
+    "Nemotron-Personas-India": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic English and Hindi personas via Data Designer."),
+    "Nemotron-Personas-Japan": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic Japanese personas via Data Designer."),
+    "Nemotron-Personas-Korea": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic Korean personas via Data Designer with a PGM and gemma-4-31b."),
+    "Nemotron-Personas-Brazil": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic Brazilian personas via Data Designer."),
+    "Nemotron-Personas-France": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic French personas via Data Designer."),
+    "Nemotron-Personas-Belgium": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic multilingual Belgian personas via Data Designer."),
+    "Nemotron-Personas-Singapore": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic Singaporean personas via Data Designer."),
+    "Nemotron-Personas-Vietnam": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic Vietnamese personas via Data Designer."),
+    "Nemotron-Personas-El-Salvador": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic Salvadoran personas via Data Designer."),
+    "Nemotron-PII": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic records with span-level PII labels generated with Data Designer from personas."),
+    "Retrieval-Synthetic-NVDocs-v1": R(T3, "NeMo Data Designer", "dd", "tools", "Synthetic retrieval QA over public NVIDIA docs via Data Designer (Nemotron Ultra and Super generators)."),
+    "FinHeadlineMix": R(T3, "NeMo Data Designer + NeMo Curator", "dd", "tools", "500k synthetic financial headlines via Data Designer (Nemotron-3-Nano-30B-A3B), deduplicated with NeMo Curator."),
+    "Nemotron-RL-Instruction-Following-Structured-Outputs-v2": R(T3, "NeMo Data Designer + NeMo Gym", "gym", "released", "Synthetic structured-output prompts (Nemotron 3 Ultra); NeMo Gym verifier configs linked."),
+    "Nemotron-RL-Instruction-Following-Free-Form-Formatting-v1": R(T3, "NeMo Data Designer + NeMo Gym", "gym", "released", "Synthetic formatting prompts; NeMo Gym format_verification config linked."),
+    "Nemotron-RL-Instruction-Following-Citation-Formatting-v1": R(T3, "NeMo Data Designer + NeMo Gym", "gym", "released", "Synthetic citation prompts; NeMo Gym citation_format config linked."),
+    "Nemotron-VLM-Dataset-v2": R(T3, "NeMo Curator (nvpdftex OCR) for OCR subsets", "curator_ocr", "tools", "Card says the OCR subsets can be regenerated with Curator nvpdftex; other subsets are Qwen and gpt-oss auto-labels on real images."),
+    "SAGE-10k": R(T3, "SAGE agentic 3D scene generation", "sage", "tools", "10k interactive indoor scenes generated by the SAGE pipeline; kits export GLB and USD and load into IsaacSim."),
+    "vipe-wild-sdg-1m": R(T3, "ViPE", "vipe", "released", "Camera pose, depth and intrinsics estimated with ViPE on public videos."),
+    "vipe-dynpose-100kpp": R(T3, "ViPE", "vipe", "released", "ViPE annotations over DynPose-100K++ clips."),
+    "vipe-web360": R(T3, "ViPE", "vipe", "released", "ViPE annotations over 360-degree web videos."),
+    "dynpose-100k": R(T3, "DynPose-100K pose pipeline", "dynpose", "released", "Camera poses for 100k Panda-70M clips via the released dynamic-pose pipeline."),
+    "ffs_stereo4d": R(T3, "FoundationStereo", "ffs", "released", "Disparity maps generated from Stereo4D with FoundationStereo."),
+    "Numb3rs": R(T3, "Magpie TTS", "magpie", "tools", "Written and spoken number pairs with audio synthesized by Magpie TTS."),
+    "Nemotron-Content-Safety-Audio-Dataset": R(T3, "Magpie-Multilingual TTS", "magpie", "tools", "Aegis 2.0 test prompts rendered to speech with Magpie-Multilingual TTS."),
+    "Nemotron-Research-GooseReason-0.7M": R(T3, "Golden Goose pipeline", "", "tools", "RLVR tasks synthesized from unverifiable web text with the Golden Goose pipeline (paper)."),
+    "Nemotron-Safety-Guard-Dataset-v3": R(T3, "CultureGuard pipeline", "cultureguard", "tools", "Culturally adapted and translated safety data generated with the CultureGuard pipeline."),
+    "When2Call": R(T3, "When2Call generation code", "when2call", "tools", "Synthetic tool-calling decision data; project code on GitHub."),
+    "ToolScale": R(T3, "ToolOrchestra", "toolorch", "tools", "Synthetic environments and tool-call tasks from the ToolOrchestra project."),
+    "Nemotron-PrismMath": R(T3, "Prismatic Synthesis", "prism", "tools", "Math problems generated by 32B and 72B Qwen LLMs with Prismatic Synthesis; no web crawling."),
+    "Nemotron-CrossThink": R(T3, "CrossThink persona-based synthesis", "crossthink", "tools", "Multi-domain QA synthesized from CommonCrawl personas with Qwen2.5-72B."),
+})
+
+# NeMo Gym environments (prompt set fixed, rollouts and verification regenerate in the library)
+_gym = {
+    "Nemotron-RL-agent-workplace_assistant": "Synthetic workplace tool-use tasks (emails, meetings).",
+    "Nemotron-RL-agent-calendar_scheduling": "Synthetic multi-event calendar scheduling tasks.",
+    "Nemotron-RL-Agentic-Function-Calling-Pivot-v1": "Tool-call tasks scored against an expert model's choices.",
+    "Nemotron-RL-Agentic-Conversational-Tool-Use-Pivot-v1": "Synthetic tool-use conversations across 838 domains.",
+    "Nemotron-RL-Agentic-Terminal-Pivot-v1": "Decision points from successful terminal-agent trajectories; terminus_judge environment.",
+    "Nemotron-RL-Agentic-Indirect-Prompt-Injection-v1": "Synthetic indirect prompt-injection scenarios (Nemotron 3 Ultra).",
+    "Nemotron-RL-Agentic-SWE-Pivot-v1": "SWE-Gym and R2E-Gym issues refactored for the OpenHands environment.",
+    "Nemotron-RL-Instruction-Following-Calendar-v2": "Synthetic calendar instruction-following prompts.",
+    "Nemotron-RL-Instruction-Following-MultiTurnChat-v1": "Synthetic multi-turn chat instruction-following prompts.",
+    "Nemotron-RL-Instruction-Following-Adversarial-v1": "Adversarial instruction-following prompts with dual evaluation.",
+    "Nemotron-RL-instruction_following": "Objective instruction-adherence prompts with verifiers.",
+    "Nemotron-RL-instruction_following-structured_outputs": "Structured-output prompts varying schema complexity.",
+    "Nemotron-RL-Identity-Following-v1": "Synthetic identity-probing prompts from human seeds.",
+    "Nemotron-RL-InverseIFEval-v1": "Adversarial inverse-IFEval prompts.",
+    "Nemotron-RL-CFBench-v1": "Constraint-following prompts.",
+    "Nemotron-RL-SysBench-v1": "System-message-following prompts.",
+    "Nemotron-RL-Multichallenge-v1": "Multi-turn instruction-following prompts.",
+    "Nemotron-RL-knowledge-mcqa": "Synthetic multi-domain knowledge MCQA.",
+    "Nemotron-RL-knowledge-openqa": "Synthetic open-ended knowledge QA.",
+    "Nemotron-RL-knowledge-web_search-mcqa": "Synthetic knowledge MCQA requiring web search.",
+    "Nemotron-RL-QA-Abstention-v1": "HotpotQA-derived abstention prompts; rollouts generated online during RL.",
+    "Nemotron-RL-math-advanced_calculations": "Synthetic calculation problems with composed functions.",
+    "Nemotron-RL-math-stack_overflow": "Math Stack Exchange problems formatted for NeMo Gym.",
+    "Nemotron-RL-math-OpenMathReasoning": "OpenMathReasoning problems formatted for NeMo Gym.",
+    "Nemotron-RL-Math-v2": "Math RL prompts with GPT-5.2-verified answers; NeMo RL recipe linked.",
+    "Nemotron-Math-Proofs-v3-RL": "Proof-generation prompts from AoPS formatted for NeMo Gym.",
+    "Nemotron-RL-coding-competitive_coding": "Public contest problems (CodeContests, Codeforces) formatted for NeMo Gym.",
+    "Nemotron-RL-ARC-AGI-v1": "ARC puzzle prompts collected programmatically; verifier shipped as a NeMo Gym resource server.",
+    "Nemotron-RL-bixbench_hypothesis": "BixBench-derived hypothesis tasks.",
+    "Nemotron-RL-litmus-bench-v0.1": "Chemistry reasoning QA for RL.",
+    "Nemotron-RL-Safety-v1": "Synthetic and public safety prompts; responses discarded and regenerated.",
+    "Nemotron-RL-Jailbreak-Robustness-v1": "Jailbreak-robustness RLVR prompts.",
+    "Nemotron-3-Nano-RL-Training-Blend": "Blend index over NeMo Gym prompt sets for Nemotron 3 Nano.",
+    "Nemotron-RL-Lightning-Training-Blend": "Blend index over NeMo Gym prompt sets for Nemotron 3.5 Lightning.",
+    "Nemotron-RL-Super-Training-Blends": "Blend index over NeMo Gym prompt sets for Nemotron 3 Super.",
+    "Nemotron-RL-Ultra-Training-Blends": "Blend index over NeMo Gym prompt sets for Nemotron 3 Ultra.",
+}
+for k, v in _gym.items():
+    REGEN[k] = R(T3, "NeMo Gym", "gym", "env", v)
+
+# ------------------------------------------------------------------ T4: third-party generation libraries
+REGEN.update({
+    "Nemotron-RL-ReasoningGym-v1": R(T4, "Reasoning Gym", "rgym", "released", "15,000 samples from 104 procedural Reasoning Gym environments."),
+    "OCR-Synthetic-Multilingual-v1": R(T4, "SynthDoG (heavily modified)", "synthdog", "tools", "Synthetic multilingual OCR pages from a modified SynthDoG; the modifications are not released."),
+})
+
+# ------------------------------------------------------------------ T5: LLM-synthesized text, generator named on the card
+_t5 = {
+    "Nemotron-CC-v2": ("Qwen3-30B-A3B, DeepSeek-V3, Mistral-NeMo-12B-Instruct", "Synthetic rephrasing and diverse QA over Common Crawl (synthetic portion only)."),
+    "Nemotron-CC-v2.1": ("Qwen3-30B-A3B, Qwen3-235B-A22B, DeepSeek-R1-0528, Phi-4", "Synthetic QA, code review, student-teacher, rewriting and transpilation data over CC and GitHub."),
+    "Nemotron-CC-Code-v1": ("Mixtral 8x22B, Qwen3-32B, Qwen3-30B-A3B", "Synthetic code QA and code-review data over GitHub sources."),
+    "Nemotron-Pretraining-Code-v1": ("Qwen3-30B-A3B, DeepSeek-V3, Mixtral-8x22B", "Synthetic code pretraining data."),
+    "Nemotron-Pretraining-Code-v2": ("Qwen3-30B-A3B, Qwen3-235B-A22B, DeepSeek-R1-0528, Phi-4", "Synthetic code pretraining data (five generation techniques)."),
+    "Nemotron-Pretraining-Specialized-v1": ("Qwen3-30B-A3B, Qwen3-235B-A22B, DeepSeek-R1-0528, Phi-4", "Specialized synthetic pretraining data."),
+    "Nemotron-Pretraining-Specialized-v1.1": ("gpt-oss-120b, gpt-oss-20b, Qwen3-235B-A22B, DeepSeek-V3", "Synthetic code concepts, algorithmic Python, economics MCQ."),
+    "Nemotron-Pretraining-Specialized-v1.2": ("Qwen3-235B-A22B-Thinking-2507, DeepSeek-V3, Qwen3-30B-A3B-Instruct", "Fact-seeking questions from Finewiki and other synthetic subsets."),
+    "Nemotron-Pretraining-SFT-v1": ("Qwen2.5-32B/72B, Qwen3-30B-A3B, DeepSeek-V3, Mixtral-8x22B", "Multilingual QA and rephrased math and code for pretraining."),
+    "Nemotron-Pretraining-Dataset-sample": ("Qwen3-30B-A3B, Qwen2.5-32B, DeepSeek-V3, Mixtral-8x22B", "Sample of the Nemotron pretraining synthetic subsets."),
+    "Nemotron-Pretraining-Legal-v1": ("Qwen3-235B-A22B-Instruct-2507", "Case-law summaries via Qwen3-235B plus template questions seeded with Nemotron Personas."),
+    "Nemotron-Post-Training-Dataset-v1": ("Llama-3.3-Nemotron-Super-49B-v1.5, DeepSeek-R1-0528, Qwen3", "All responses synthetically generated from open models."),
+    "Nemotron-Post-Training-Dataset-v2": ("DeepSeek-R1-0528, Qwen3-235B-A22B, Qwen3-30B-A3B, Qwen2.5", "All responses synthetically generated from open models."),
+    "Llama-Nemotron-Post-Training-Dataset": ("Llama-3.1-Nemotron-Ultra-253B, DeepSeek-R1, Qwen2.5", "All responses synthetically generated from open models."),
+    "Puzzle-KD-Nemotron-Post-Training-Dataset-v2": ("DeepSeek-R1-0528, Qwen2.5-14B (via Nemotron-Post-Training-v2)", "Filtered subset of Nemotron-Post-Training-Dataset-v2."),
+    "Nemotron-Cascade-2-SFT-Data": ("DeepSeek-V3.2, DeepSeek-V3.2-Speciale, GPT-OSS-120B", "Responses generated for math, proofs, science and code prompts."),
+    "Nemotron-Cascade-SFT-Stage-1": ("DeepSeek-R1", "All responses generated with DeepSeek-R1 with reasoning traces."),
+    "Nemotron-Cascade-SFT-Stage-2": ("DeepSeek-R1-0528, DeepSeek-V3-0324", "Thinking and non-thinking responses from DeepSeek models."),
+    "Nemotron-Cascade-SFT-SWE": ("DeepSeek-R1-0528", "Bug localization, repair and test-generation responses."),
+    "Nemotron-Instruction-Following-Chat-v1": ("GPT-OSS-120B, Qwen3-235B-A22B (Thinking, Instruct)", "Responses generated and filtered by IFEval-style verifiers."),
+    "Nemotron-SFT-Instruction-Following-Chat-v2": ("Kimi-K2, GLM-4.6, Qwen3-235B-A22B, GPT-OSS-120B", "Synthetic dialogues from six open models."),
+    "Nemotron-SFT-Instruction-Following-Chat-v3": ("GLM-5; Qwen3-Nemotron-235B GenRM as judge", "Best-of-n responses to public seed prompts."),
+    "Nemotron-Science-v1": ("GPT-OSS-120B", "Synthetic GPQA-style science questions and reasoning traces."),
+    "Nemotron-SFT-Science-v2": ("Kimi-K2-Instruct, DeepSeek-V3.2, DeepSeek-V4-Pro, GPT-OSS", "Synthetic MCQ and RQA science reasoning."),
+    "OpenScience": ("Qwen2.5-72B/32B-Instruct, Qwen3-235B-A22B, DeepSeek-R1", "Synthetic science questions and solutions."),
+    "OpenScienceReasoning-2": ("DeepSeek-R1-0528", "New questions and all solutions generated with DeepSeek-R1-0528."),
+    "Nemotron-Agentic-v1": ("Qwen3-235B-A22B (Thinking, Instruct), GPT-OSS-120B", "Simulated multi-turn tool-use conversations."),
+    "Nemotron-SFT-Agentic-v2": ("DeepSeek-V3.2, GLM-4.6", "Web-search and customer-service agent trajectories."),
+    "Nemotron-SFT-OpenCode-v1": ("GPT-OSS-120B (tasks), Qwen3-Coder-480B-A35B (traces)", "Synthetic agentic coding tasks and solution traces."),
+    "Nemotron-SFT-CUDA-v1": ("GLM-4.7", "Synthetic CUDA SFT data."),
+    "Nemotron-SFT-Multilingual-v1": ("Qwen2.5-14B-Instruct, Qwen3-4B-Thinking-2507", "Translated SFT seed data with multilingual reasoning."),
+    "Nemotron-SFT-Multilingual-v2": ("DeepSeek-V3-0324, Qwen3-4B-Thinking-2507", "Translated SFT seed data with multilingual reasoning."),
+    "Nemotron-SFT-ARC-AGI-v1": ("DeepSeek-V3.2, Qwen3-235B-A22B-Thinking, Kimi-K2.5, GLM-4.7", "Open-weight LLMs run as multi-turn agents over programmatically collected ARC puzzles."),
+    "Nemotron-SWE-v1": ("Qwen3-Coder-480B-A35B-Instruct in OpenHands", "59k agent trajectories synthesized in the OpenHands harness."),
+    "Nemotron-SFT-SWE-v2": ("Qwen3-Coder-480B-A35B-Instruct in OpenHands", "46k agent trajectories synthesized in the OpenHands harness."),
+    "Nemotron-SFT-SWE-v3": ("not named on card (OpenHands lineage)", "Synthetic SWE agent trajectories."),
+    "Nemotron-SFT-SWE-v3.5": ("not named on card (OpenHands lineage)", "Synthetic SWE agent trajectories."),
+    "SWE-Hero-openhands-trajectories": ("Qwen3-Coder-480B-A35B-Instruct in OpenHands", "34k agent trajectories synthesized in OpenHands."),
+    "SWE-Zero-openhands-trajectories": ("Qwen3-Coder-480B-A35B-Instruct in OpenHands", "318k agent trajectories synthesized in OpenHands."),
+    "Open-SWE-Traces": ("Qwen3.6-27B, Qwen3.8-27B, DeepSeek-V4-Flash in OpenHands, SWE-agent, mini-swe-agent", "Agent trajectories across several harnesses."),
+    "Nemotron-Terminal-Corpus": ("not named on card", "Synthetic terminal tasks generated from a taxonomy of primitive terminal skills."),
+    "Nemotron-Terminal-Synthetic-Tasks": ("not named on card", "Skill-based synthetic tasks from the Terminal-Corpus."),
+    "ProCUA-SFT": ("Kimi-K2.5", "Synthetic computer-use agent trajectories."),
+    "Nemotron-SpecializedDomains-Finance-v1": ("GPT-OSS-120B", "326K QA pairs generated from SEC filings."),
+    "Privasis-USA": ("GPT-OSS-120B + Nemotron-Personas-USA", "Fully generated privacy-sensitive text records."),
+    "Privasis-Zero": ("Qwen3, GPT-OSS-120B, Gemini-2.5 (closed)", "Fully LLM-generated text records."),
+    "AceReason-1.1-SFT": ("DeepSeek-R1", "All math and code responses generated by DeepSeek-R1."),
+    "AceMath-Instruct-Training-Data": ("Qwen2.5-Math-72B-Instruct; GPT-4o-mini (closed)", "Math outputs from Qwen2.5-Math-72B, other prompts via GPT-4o-mini."),
+    "AceMath-RM-Training-Data": ("pool of 8 LLMs incl. Qwen2.5-Math and closed models", "64 candidate responses per question from 8 LLMs."),
+    "Daring-Anteater": ("Mixtral-8x7B-Instruct-v0.1 + NVIDIA proprietary models", "Majority synthetically generated instruction-tuning data."),
+    "CantTalkAboutThis-Topic-Control-Dataset": ("Mixtral-8x7B-Instruct", "Commercially friendly version generated with Mixtral."),
+    "CantTalkAboutThis-Topic-Control-Dataset-NC": ("gpt-4-turbo (closed)", "Non-commercial version generated with gpt-4-turbo."),
+    "Nemotron-Content-Safety-Reasoning-Dataset": ("Qwen3-32B, DeepSeek-R1-0528, gpt-oss-120b", "Reasoning traces justifying labels of existing NVIDIA safety sets."),
+    "Nemotron-3.5-Content-Safety-Dataset": ("Flux.1 Schnell (images), Qwen3-235B/397B/80B (prompts)", "Synthetically generated images and prompts for part of the set."),
+    "Nemotron-Content-VISafe-v1": ("deterministic templates + gpt-oss-120b, Qwen3-235B-A22B", "Vietnamese-native safety probes generated from seeds and templates."),
+    "Nemotron-SFT-Safety-v1": ("not named on card", "Synthetically generated safety responses; underlying responses discarded and regenerated."),
+    "ChatQA-Training-Data": ("GPT-4 (closed) for synthetic subsets", "Synthetic conversational QA subsets generated by OpenAI models."),
+    "ChatQA2-Long-SFT-data": ("not named on card", "NarrativeQA_131072 synthetically extended with related paragraphs."),
+    "Nemotron-Image-Training-v3": ("Qwen-3 / Qwen-3.5 labels; gemini-3-flash and gpt-4o-mini verification", "Synthetic annotations on real images (annotations only)."),
+    "Llama-Nemotron-VLM-Dataset-v1": ("InternVL2-Llama3-76B, Qwen", "Synthetic annotations on real images (annotations only)."),
+    "nemotron-research-lgt": ("not named on card", "1M+ synthetic visual reasoning problems with reasoning chains (LGT)."),
+}
+for k, (models, note) in _t5.items():
+    REGEN[k] = R(T5, models, "", "generator", note)
+
+# Cards that were unreadable or too thin to classify (noted in the table footnote).
+UNVERIFIED = [
+    "ORCA-sim-push-cart-gr00t", "dextrah_textures", "cosmos_data_latent_480p", "Cosmos-AnomalyGen-Glass-Masks",
+    "ChronoEdit-Example-Dataset", "Lyra-Testing-Example", "nvblox", "NV-Raw2insights-MRI-4DFlow-Dev", "aisim-data", "APE_dataset",
+]
+
+TIER_ORDER = [T1, T2, TA, T3, T4, T5]
+STATUS_LABEL = {
+    "released": "Pipeline released", "tools": "Public tools, scripts not released", "internal": "NVIDIA-internal tooling",
+    "env": "NeMo Gym environment", "inputs": "Asset pack (inputs)", "generator": "Generator model(s) named only",
+}
